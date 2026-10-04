@@ -1,10 +1,11 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Billboard, Environment, Lightformer, useTexture } from "@react-three/drei";
+import { Billboard, Environment, Lightformer, useTexture, Html } from "@react-three/drei";
 import tree1 from "@/assets/tree1.png";
 import tree2 from "@/assets/tree2.png";
 import tree3 from "@/assets/tree3.png";
 import groundImg from "@/assets/grass_real.jpg";
 import roadImg from "@/assets/road_real.jpg";
+import floatingCampusImg from "@/assets/floating_campus.png";
 import { Suspense, useMemo, useRef } from "react";
 import * as THREE from "three";
 
@@ -35,13 +36,13 @@ function Forest() {
       const texIdx = i % 3;
       // Left side
       list.push({
-        pos: new THREE.Vector3(-(4.2 + r() * 2.8), 0, z),
+        pos: new THREE.Vector3(-(6.5 + r() * 3.5), 0, z),
         scale: 0.9 + r() * 0.5,
         texIdx,
       });
       // Right side (different variety)
       list.push({
-        pos: new THREE.Vector3(4.2 + r() * 2.8, 0, z + (r() - 0.5) * 1.5),
+        pos: new THREE.Vector3(6.5 + r() * 3.5, 0, z + (r() - 0.5) * 1.5),
         scale: 0.9 + r() * 0.5,
         texIdx: (texIdx + 1) % 3,
       });
@@ -57,7 +58,7 @@ function Forest() {
         const h = 10 * t.scale;
         const w = h * 0.94;
         return (
-          <Billboard key={i} position={[t.pos.x, h * 0.5, t.pos.z]} lockX lockZ>
+          <Billboard key={i} position={[t.pos.x, h * 0.5 - 1.5, t.pos.z]} lockX lockZ>
             <mesh>
               <planeGeometry args={[w, h]} />
               <meshStandardMaterial
@@ -103,7 +104,7 @@ function BackgroundTrees() {
         if (!tex) return null;
         const h = 9 * t.scale;
         return (
-          <Billboard key={i} position={[t.pos.x, h * 0.5, t.pos.z]} lockX lockZ>
+          <Billboard key={i} position={[t.pos.x, h * 0.5 - 1.2, t.pos.z]} lockX lockZ>
             <mesh>
               <planeGeometry args={[h * 0.9, h]} />
               <meshStandardMaterial
@@ -128,7 +129,7 @@ function Ground() {
   if (!grass || !road) return null;
 
   grass.wrapS = grass.wrapT = THREE.RepeatWrapping;
-  grass.repeat.set(14, 28);          // fine-detail tiling
+  grass.repeat.set(60, 97);          // fine-detail tiling
   grass.colorSpace = THREE.SRGBColorSpace;
   grass.anisotropy = 16;
   grass.minFilter = THREE.LinearMipmapLinearFilter;
@@ -136,173 +137,156 @@ function Ground() {
   grass.generateMipmaps = true;
 
   road.wrapS = road.wrapT = THREE.RepeatWrapping;
-  road.repeat.set(1, 26);
+  road.repeat.set(1, 21);
   road.colorSpace = THREE.SRGBColorSpace;
   road.anisotropy = 8;
 
   return (
     <>
-      {/* Wide grass plane */}
-      <mesh rotation-x={-Math.PI / 2} position={[0, -0.01, -45]} receiveShadow>
-        <planeGeometry args={[100, 160]} />
+      {/* Wide grass plane (the wedge) */}
+      <mesh rotation-x={-Math.PI / 2} position={[0, -0.01, -30]} receiveShadow>
+        <planeGeometry args={[100, 130]} />
         <meshStandardMaterial map={grass} roughness={0.97} metalness={0} color="#cce8aa" />
       </mesh>
       {/* Road */}
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0.02, -45]} receiveShadow>
-        <planeGeometry args={[3.3, 160, 1, 80]} />
+      <mesh rotation-x={-Math.PI / 2} position={[0, 0.02, -30]} receiveShadow>
+        <planeGeometry args={[3.3, 130, 1, 80]} />
         <meshStandardMaterial map={road} roughness={0.9} />
       </mesh>
       {/* Road edge lines */}
-      <mesh rotation-x={-Math.PI / 2} position={[-1.78, 0.04, -45]}>
-        <planeGeometry args={[0.07, 160]} />
+      <mesh rotation-x={-Math.PI / 2} position={[-1.78, 0.04, -30]}>
+        <planeGeometry args={[0.07, 130]} />
         <meshStandardMaterial color="#fffff0" roughness={0.8} />
       </mesh>
-      <mesh rotation-x={-Math.PI / 2} position={[1.78, 0.04, -45]}>
-        <planeGeometry args={[0.07, 160]} />
+      <mesh rotation-x={-Math.PI / 2} position={[1.78, 0.04, -30]}>
+        <planeGeometry args={[0.07, 130]} />
         <meshStandardMaterial color="#fffff0" roughness={0.8} />
       </mesh>
     </>
   );
 }
 
-/* ─── NIT Sikkim 3-D aerial campus at end of road ───── */
-function NITCampus() {
-  const campusTex = useMemo(() => {
-    const canvas = document.createElement("canvas");
-    canvas.width = 1024;
-    canvas.height = 768;
-    const ctx = canvas.getContext("2d")!;
-
-    // Hillside backdrop
-    const bg = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    bg.addColorStop(0, "#5a8f5a");
-    bg.addColorStop(0.45, "#4a7a4a");
-    bg.addColorStop(1, "#2d5c2d");
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Misty mountain upper
-    ctx.fillStyle = "rgba(200,220,200,0.35)";
-    ctx.beginPath();
-    ctx.ellipse(512, 60, 750, 180, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Terrace retaining walls
-    ctx.strokeStyle = "#707060";
-    ctx.lineWidth = 4;
-    for (let i = 0; i < 6; i++) {
-      ctx.beginPath();
-      ctx.moveTo(180 + i * 55, 520 - i * 28);
-      ctx.bezierCurveTo(380 + i * 38, 508 - i * 26, 640 + i * 18, 496 - i * 24, 820 + i * 8, 484 - i * 22);
-      ctx.stroke();
+/* ─── NIT Sikkim Campus Modal ───── */
+function NITCampus({ progress }: { progress: React.MutableRefObject<number> }) {
+  const modalRef = useRef<HTMLDivElement>(null);
+  
+  useFrame(() => {
+    if (modalRef.current) {
+      const p = progress.current;
+      if (p > 0.75) {
+         const t = Math.min((p - 0.75) / 0.25, 1);
+         // Easing function for smooth pop-up
+         const easeOutBack = (x: number): number => {
+           const c1 = 1.70158;
+           const c3 = c1 + 1;
+           return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+         };
+         const scale = 0.5 + 0.5 * easeOutBack(t);
+         
+         modalRef.current.style.opacity = t.toString();
+         modalRef.current.style.transform = `scale(${scale})`;
+         modalRef.current.style.pointerEvents = t > 0.9 ? 'auto' : 'none';
+      } else {
+         modalRef.current.style.opacity = '0';
+         modalRef.current.style.transform = `scale(0.5)`;
+         modalRef.current.style.pointerEvents = 'none';
+      }
     }
-
-    // Campus roads
-    ctx.strokeStyle = "#9a9080";
-    ctx.lineWidth = 16;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(170, 760);
-    ctx.bezierCurveTo(220, 590, 340, 510, 390, 410);
-    ctx.bezierCurveTo(440, 320, 500, 275, 555, 215);
-    ctx.stroke();
-    ctx.lineWidth = 10;
-    ctx.beginPath();
-    ctx.moveTo(390, 410);
-    ctx.bezierCurveTo(490, 395, 620, 375, 730, 355);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(555, 215);
-    ctx.bezierCurveTo(660, 205, 760, 215, 830, 235);
-    ctx.stroke();
-
-    function shadeDown(hex: string) {
-      const r = parseInt(hex.slice(1, 3), 16);
-      const g = parseInt(hex.slice(3, 5), 16);
-      const b = parseInt(hex.slice(5, 7), 16);
-      return `rgb(${Math.max(0,r-32)},${Math.max(0,g-32)},${Math.max(0,b-32)})`;
-    }
-
-    function drawBuilding(x: number, y: number, w: number, h: number, rot: number, color: string) {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(rot);
-      const g = ctx.createLinearGradient(-w/2, -h/2, w/2, h/2);
-      g.addColorStop(0, color);
-      g.addColorStop(1, shadeDown(color));
-      ctx.fillStyle = g;
-      ctx.fillRect(-w/2, -h/2, w, h);
-      // Ridge line
-      ctx.strokeStyle = shadeDown(color);
-      ctx.lineWidth = 2.5;
-      ctx.beginPath(); ctx.moveTo(-w/2+3, 0); ctx.lineTo(w/2-3, 0); ctx.stroke();
-      // Shadow edge
-      ctx.fillStyle = "rgba(0,0,0,0.2)";
-      ctx.fillRect(-w/2, h/2-5, w, 7);
-      ctx.fillRect(w/2-5, -h/2, 7, h);
-      ctx.restore();
-    }
-
-    // Main academic block
-    drawBuilding(418, 345, 155, 78, -0.15, "#4ecdc0");
-    drawBuilding(488, 298, 88, 58, -0.15, "#4ecdc0");
-    // Hostel row
-    drawBuilding(598, 398, 68, 98, 0.10, "#45b7aa");
-    drawBuilding(676, 388, 64, 88, 0.10, "#3da898");
-    drawBuilding(318, 428, 78, 52, -0.20, "#52d1c4");
-    drawBuilding(258, 476, 58, 44, -0.18, "#48c4b7");
-    // Admin
-    drawBuilding(548, 238, 108, 58, -0.05, "#5addd0");
-    drawBuilding(678, 248, 72, 48, -0.05, "#4ecdc0");
-    // Utilities
-    drawBuilding(378, 508, 44, 34, -0.25, "#3d9e92");
-    drawBuilding(748, 338, 48, 38, 0.12, "#45b7aa");
-    drawBuilding(798, 278, 38, 28, 0.08, "#3da898");
-    drawBuilding(228, 558, 26, 20, -0.30, "#357d74");
-
-    // Water tank
-    ctx.fillStyle = "#b8b8b8";
-    ctx.beginPath(); ctx.arc(528, 178, 13, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = "#989898";
-    ctx.beginPath(); ctx.arc(572, 168, 9, 0, Math.PI*2); ctx.fill();
-
-    // Vegetation clusters
-    for (let i = 0; i < 44; i++) {
-      const vx = 200 + Math.sin(i * 137.5) * 300;
-      const vy = 200 + Math.cos(i * 137.5) * 270;
-      const vr = 7 + Math.sin(i * 73) * 5;
-      const va = 0.38 + Math.sin(i * 53) * 0.18;
-      ctx.fillStyle = `rgba(28,95,28,${va})`;
-      ctx.beginPath(); ctx.arc(vx, vy, vr, 0, Math.PI*2); ctx.fill();
-    }
-
-    // Label banner
-    ctx.fillStyle = "rgba(0,0,0,0.65)";
-    ctx.roundRect(230, 685, 360, 58, 8);
-    ctx.fill();
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 26px Arial,sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("NIT SIKKIM", 410, 724);
-
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 8;
-    return tex;
-  }, []);
+  });
 
   return (
-    <group position={[0, 0, -76]}>
-      {/* Green hillside base */}
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0.05, 0]}>
-        <circleGeometry args={[24, 48]} />
-        <meshStandardMaterial color="#3a6640" roughness={1} />
-      </mesh>
-      {/* Aerial campus panel angled for 3-D bird's-eye perspective */}
-      <mesh position={[0, 14, -4]} rotation-x={-Math.PI / 2 + 0.18}>
-        <planeGeometry args={[38, 28]} />
-        <meshStandardMaterial map={campusTex} roughness={0.55} side={THREE.DoubleSide} />
-      </mesh>
+    <group position={[0, 24.2, -96]}>
+      <Html transform center scale={0.3} zIndexRange={[100, 0]}>
+        <div ref={modalRef} style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255, 255, 255, 0.4)',
+          borderRadius: '40px',
+          padding: '50px',
+          width: '900px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          boxShadow: '0 32px 128px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.2)',
+          opacity: 0,
+          transformOrigin: 'center center',
+          pointerEvents: 'none',
+        }}>
+           <h2 style={{
+             color: 'white',
+             fontSize: '56px',
+             fontFamily: '"Inter", sans-serif',
+             fontWeight: '800',
+             margin: '0 0 10px 0',
+             textShadow: '0 4px 16px rgba(0,0,0,0.4)',
+             letterSpacing: '-0.02em'
+           }}>
+             Explore NIT Sikkim
+           </h2>
+           <p style={{
+             color: 'rgba(255,255,255,0.9)',
+             fontSize: '24px',
+             fontFamily: '"Inter", sans-serif',
+             margin: '0 0 40px 0',
+             textShadow: '0 2px 8px rgba(0,0,0,0.3)'
+           }}>
+             The official venue for UDGAM 2K26
+           </p>
+           
+           <div style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}>
+             {/* Glow effect behind image */}
+             <div style={{
+               position: 'absolute',
+               top: '50%',
+               left: '50%',
+               transform: 'translate(-50%, -50%)',
+               width: '80%',
+               height: '80%',
+               background: 'radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%)',
+               filter: 'blur(40px)',
+               zIndex: -1
+             }} />
+             {/* Use floating_campus.png because nitsikkim_3d_img.png is not in src/assets */}
+             <img src={floatingCampusImg} alt="NIT Sikkim Campus" style={{
+               width: '110%',
+               maxWidth: '1000px',
+               height: 'auto',
+               filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))',
+               transform: 'translateY(-20px)'
+             }} />
+           </div>
+
+           <button 
+             style={{
+               marginTop: '20px',
+               padding: '20px 50px',
+               fontSize: '28px',
+               background: 'linear-gradient(135deg, #fff 0%, #f0f0f0 100%)',
+               color: '#e9a9bd',
+               border: 'none',
+               borderRadius: '60px',
+               fontWeight: '900',
+               cursor: 'pointer',
+               boxShadow: '0 12px 24px rgba(0,0,0,0.2), 0 0 0 4px rgba(255,255,255,0.3)',
+               transition: 'all 0.2s ease',
+               textTransform: 'uppercase',
+               letterSpacing: '1px'
+             }} 
+             onPointerOver={(e) => {
+               e.currentTarget.style.transform = 'translateY(-4px) scale(1.05)';
+               e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3), 0 0 0 4px rgba(255,255,255,0.5)';
+             }}
+             onPointerOut={(e) => {
+               e.currentTarget.style.transform = 'translateY(0) scale(1)';
+               e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.2), 0 0 0 4px rgba(255,255,255,0.3)';
+             }}
+             onClick={() => alert('Entering Campus Tour...')}
+           >
+             Enter Campus
+           </button>
+        </div>
+      </Html>
     </group>
   );
 }
@@ -326,6 +310,7 @@ const petalVert = /* glsl */ `
   }`;
 const petalFrag = /* glsl */ `
   varying float vSeed;
+  uniform float uAlpha;
   void main() {
     vec2 uv = gl_PointCoord - 0.5;
     float a = vSeed * 6.28;
@@ -334,7 +319,7 @@ const petalFrag = /* glsl */ `
     if (d > 0.42) discard;
     float vein = smoothstep(0.03, 0.0, abs(uv.x)) * 0.14;
     vec3 c = mix(vec3(0.96, 0.50, 0.68), vec3(1.0, 0.91, 0.94), vSeed) + vein;
-    gl_FragColor = vec4(c, smoothstep(0.42, 0.18, d) * 0.90);
+    gl_FragColor = vec4(c, smoothstep(0.42, 0.18, d) * 0.90 * uAlpha);
   }`;
 
 function Petals({ count, progress }: { count: number; progress: React.MutableRefObject<number> }) {
@@ -353,10 +338,12 @@ function Petals({ count, progress }: { count: number; progress: React.MutableRef
     g.setAttribute("aSeed", new THREE.BufferAttribute(seed, 1));
     return g;
   }, [count]);
-  const uniforms = useMemo(() => ({ uTime: { value: 0 }, uSpeed: { value: 1 } }), []);
+  const uniforms = useMemo(() => ({ uTime: { value: 0 }, uSpeed: { value: 1 }, uAlpha: { value: 1 } }), []);
   useFrame((_, d) => {
     uniforms.uTime.value += Math.min(d, 0.05);
     uniforms.uSpeed.value = 1 + progress.current * 0.9;
+    const aerialT = Math.max(0, (progress.current - 0.85) / 0.15);
+    uniforms.uAlpha.value = 1.0 - aerialT;
   });
   return (
     <points geometry={geo}>
@@ -461,13 +448,18 @@ function CameraRig({ progress }: { progress: React.MutableRefObject<number> }) {
     );
     camera.lookAt(
       Math.sin(p * Math.PI * 2 + 0.6) * 1.5 * (1 - aerialT),
-      2.2 + p * 4 + state.pointer.y * 0.3 * (1 - aerialT),
-      camera.position.z - 10 - aerialT * 20,
+      2.2 + p * 4 + state.pointer.y * 0.3 * (1 - aerialT) + aerialT * 18,
+      camera.position.z - 10 - aerialT * 30,
     );
 
     const midCol = morning.clone().lerp(golden, Math.min(p * 1.3, 1));
     const col = midCol.lerp(aerialSky, aerialT);
-    if (scene.fog) (scene.fog as THREE.Fog).color.copy(col);
+    if (scene.fog) {
+      const fog = scene.fog as THREE.Fog;
+      fog.color.copy(col);
+      fog.near = 10 + p * 120;
+      fog.far = 62 + p * 220;
+    }
     (scene.background as THREE.Color)?.copy?.(col);
 
     if (sun.current) {
@@ -492,6 +484,141 @@ function CameraRig({ progress }: { progress: React.MutableRefObject<number> }) {
   );
 }
 
+/* ─── Merch Stall ────────────────────────────────────── */
+function MerchStall({ position }: { position: [number, number, number] }) {
+  const stallRef = useRef<THREE.Group>(null);
+  const btnWrapRef = useRef<HTMLDivElement>(null);
+
+  useFrame(({ camera }) => {
+    if (stallRef.current && btnWrapRef.current) {
+      const dist = camera.position.distanceTo(stallRef.current.position);
+      if (dist < 22 && dist > 3) {
+        btnWrapRef.current.style.opacity = '1';
+        btnWrapRef.current.style.pointerEvents = 'auto';
+      } else {
+        btnWrapRef.current.style.opacity = '0';
+        btnWrapRef.current.style.pointerEvents = 'none';
+      }
+    }
+  });
+
+  return (
+    <group position={position} ref={stallRef} rotation-y={-0.2}>
+      {/* Table */}
+      <mesh position={[0, 0.5, 0]} castShadow>
+        <boxGeometry args={[3, 1, 1.5]} />
+        <meshStandardMaterial color="#8B4513" roughness={0.9} />
+      </mesh>
+      {/* Table Front Banner */}
+      <Html position={[0, 0.5, 0.76]} transform center scale={0.008}>
+        <div style={{
+          background: '#111',
+          color: 'white',
+          padding: '20px 40px',
+          border: '4px solid #e9a9bd',
+          borderRadius: '16px',
+          fontFamily: 'sans-serif',
+          fontWeight: 'bold',
+          fontSize: '48px',
+          width: '320px',
+          textAlign: 'center',
+          boxShadow: '0px 8px 20px rgba(0,0,0,0.5)',
+        }}>
+          UDGAM MERCH
+          <div style={{ fontSize: '22px', color: '#e9a9bd', marginTop: '12px' }}>
+            👕 T-Shirts &nbsp;|&nbsp; 🧥 Hoodies
+          </div>
+        </div>
+      </Html>
+      {/* Canopy Poles */}
+      <mesh position={[-1.4, 1.5, -0.6]} castShadow>
+        <cylinderGeometry args={[0.05, 0.05, 3]} />
+        <meshStandardMaterial color="#333" roughness={0.5} />
+      </mesh>
+      <mesh position={[1.4, 1.5, -0.6]} castShadow>
+        <cylinderGeometry args={[0.05, 0.05, 3]} />
+        <meshStandardMaterial color="#333" roughness={0.5} />
+      </mesh>
+      <mesh position={[-1.4, 1.5, 0.6]} castShadow>
+        <cylinderGeometry args={[0.05, 0.05, 3]} />
+        <meshStandardMaterial color="#333" roughness={0.5} />
+      </mesh>
+      <mesh position={[1.4, 1.5, 0.6]} castShadow>
+        <cylinderGeometry args={[0.05, 0.05, 3]} />
+        <meshStandardMaterial color="#333" roughness={0.5} />
+      </mesh>
+      {/* Canopy Roof */}
+      <mesh position={[0, 3.1, 0]} castShadow rotation-x={-0.1}>
+        <boxGeometry args={[3.4, 0.1, 2]} />
+        <meshStandardMaterial color="#e9a9bd" roughness={1} />
+      </mesh>
+      {/* Folded hoodies/t-shirts */}
+      <mesh position={[-0.8, 1.1, 0]} castShadow>
+         <boxGeometry args={[0.6, 0.2, 0.6]} />
+         <meshStandardMaterial color="#222" roughness={1} />
+      </mesh>
+      <mesh position={[-0.8, 1.25, 0]} castShadow>
+         <boxGeometry args={[0.55, 0.1, 0.55]} />
+         <meshStandardMaterial color="#d9b66f" roughness={1} />
+      </mesh>
+      <Html position={[-0.8, 1.6, 0]} center transform scale={0.012}>
+        <div style={{ fontSize: '48px', filter: 'drop-shadow(0px 8px 8px rgba(0,0,0,0.5))' }}>🧥</div>
+      </Html>
+
+      <mesh position={[0, 1.15, 0]} castShadow>
+         <boxGeometry args={[0.6, 0.3, 0.6]} />
+         <meshStandardMaterial color="#fff" roughness={1} />
+      </mesh>
+      <Html position={[0, 1.5, 0]} center transform scale={0.012}>
+        <div style={{ fontSize: '48px', filter: 'drop-shadow(0px 8px 8px rgba(0,0,0,0.5))' }}>👕</div>
+      </Html>
+
+      <mesh position={[0.8, 1.1, 0.2]} castShadow>
+         <boxGeometry args={[0.6, 0.2, 0.6]} />
+         <meshStandardMaterial color="#4ecdc0" roughness={1} />
+      </mesh>
+      <Html position={[0.8, 1.45, 0.2]} center transform scale={0.012}>
+        <div style={{ fontSize: '48px', filter: 'drop-shadow(0px 8px 8px rgba(0,0,0,0.5))' }}>🧢</div>
+      </Html>
+
+      <Html position={[0, 4.5, 0]} center>
+        <div ref={btnWrapRef} style={{ transition: 'opacity 0.4s ease', opacity: 0, pointerEvents: 'none' }}>
+          <div 
+            style={{
+              background: 'white',
+              padding: '12px 24px',
+              borderRadius: '30px',
+              boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              color: '#e9a9bd',
+              fontFamily: 'sans-serif',
+              border: '3px solid #e9a9bd',
+              whiteSpace: 'nowrap',
+              transition: 'background 0.2s ease, color 0.2s ease, transform 0.2s ease',
+            }}
+            onPointerOver={(e) => {
+              e.currentTarget.style.background = '#e9a9bd';
+              e.currentTarget.style.color = 'white';
+              e.currentTarget.style.transform = 'scale(1.1)';
+            }}
+            onPointerOut={(e) => {
+              e.currentTarget.style.background = 'white';
+              e.currentTarget.style.color = '#e9a9bd';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+            onClick={() => {
+              alert('Opening Merch Page!');
+            }}
+          >
+            🛍️ Shop Merch
+          </div>
+        </div>
+      </Html>
+    </group>
+  );
+}
+
 /* ─── Root ───────────────────────────────────────────── */
 export function BlossomScene({ progress, low }: { progress: React.MutableRefObject<number>; low: boolean }) {
   return (
@@ -509,9 +636,10 @@ export function BlossomScene({ progress, low }: { progress: React.MutableRefObje
         <Ground />
         <Forest />
         <BackgroundTrees />
-        <NITCampus />
-        <ForestSign label="NIT SIKKIM" position={[3.4, 0, -12]} rotation={-0.12} accent="#d9b66f" />
-        <ForestSign label="UDGAM 2K26" position={[-3.6, 0, -32]} rotation={0.14} accent="#e9a9bd" />
+        <NITCampus progress={progress} />
+        <ForestSign label="NIT SIKKIM" position={[2.4, 0, -12]} rotation={-0.12} accent="#d9b66f" />
+        <ForestSign label="UDGAM 2K26" position={[-2.6, 0, -32]} rotation={0.14} accent="#e9a9bd" />
+        <MerchStall position={[3.8, 0, -50]} />
       </Suspense>
       <Petals count={low ? 2000 : 6500} progress={progress} />
     </Canvas>

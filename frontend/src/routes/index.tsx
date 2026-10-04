@@ -18,11 +18,7 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const highlights = [
-  { title: "Headliner Night", text: "A starlit concert beneath the canopy.", to: "/events" },
-  { title: "Workshops", text: "Learn, build and bloom with mentors.", to: "/events" },
-  { title: "Art Installations", text: "Lanterns, light and living art.", to: "/events" },
-] as const;
+
 
 function Home() {
   const progress = useRef(0);
@@ -62,28 +58,6 @@ function Home() {
           <motion.span animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="absolute bottom-10 text-sm text-secondary-foreground">scroll into the grove ↓</motion.span>
         </section>
 
-        <section className="flex h-screen items-center px-5">
-          <motion.div initial={{ opacity: 0, x: -60 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ amount: 0.5 }} className="glass max-w-md rounded-3xl p-8 md:ml-[10%]">
-            <h2 className="text-4xl font-semibold text-gradient">Three days. One bloom.</h2>
-            <p className="mt-3 text-muted-foreground">Music, tech, art and culture — wrapped in petals and starlight.</p>
-          </motion.div>
-        </section>
-
-        <section className="flex min-h-screen items-center px-5">
-          <div className="mx-auto grid w-full max-w-5xl gap-5 md:grid-cols-3">
-            {highlights.map((h, i) => (
-              <motion.div key={h.title} initial={{ opacity: 0, y: 60 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.15, duration: 0.7 }} viewport={{ amount: 0.4 }}>
-                <Link to={h.to}>
-                  <motion.div whileHover={{ y: -8, rotateX: 6, rotateY: -6 }} style={{ transformPerspective: 800 }} className="glass rounded-3xl p-7">
-                    <span className="text-3xl text-blossom-deep">✿</span>
-                    <h3 className="mt-2 text-2xl font-semibold">{h.title}</h3>
-                    <p className="mt-2 text-muted-foreground">{h.text}</p>
-                  </motion.div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </section>
 
         <section className="flex h-screen flex-col items-center justify-center px-5 text-center">
           <motion.h2 initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="text-5xl font-semibold text-gradient md:text-7xl">See you in the canopy</motion.h2>
