@@ -58,6 +58,7 @@ function Home() {
           <motion.span animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="absolute bottom-10 text-sm text-secondary-foreground">scroll into the grove ↓</motion.span>
         </section>
 
+        <div className="h-[200vh]" />
 
         <section className="flex h-screen flex-col items-center justify-center px-5 text-center">
           <motion.h2 initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="text-5xl font-semibold text-gradient md:text-7xl">See you in the canopy</motion.h2>
