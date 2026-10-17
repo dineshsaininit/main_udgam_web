@@ -64,14 +64,14 @@ describe("registration validation", () => {
     expect(teamProblems(rangoli, team("rangoli", m(4)))[0]).toMatch(/exactly 4/);
   });
 
-  it("allows a range where the rulebook does (wall painting 1-5, fill & burst 4-5)", () => {
+  it("allows a range where the rulebook does (wall painting 1-5, IPL auction 4-6)", () => {
     const m = (n: number) =>
       Array.from({ length: n }, (_, i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23W0${i}` }));
     expect(teamProblems(event("wall-painting"), team("wall-painting", m(0)))).toEqual([]);
     expect(teamProblems(event("wall-painting"), team("wall-painting", m(4)))).toEqual([]);
     expect(teamProblems(event("wall-painting"), team("wall-painting", m(5)))).not.toEqual([]);
-    expect(teamProblems(event("fill-and-burst"), team("fill-and-burst", m(2)))).not.toEqual([]);
-    expect(teamProblems(event("fill-and-burst"), team("fill-and-burst", m(3)))).toEqual([]);
+    expect(teamProblems(event("ipl-auction"), team("ipl-auction", m(2)))).not.toEqual([]);
+    expect(teamProblems(event("ipl-auction"), team("ipl-auction", m(3)))).toEqual([]);
   });
 
   it("requires every participant to be a different person", () => {

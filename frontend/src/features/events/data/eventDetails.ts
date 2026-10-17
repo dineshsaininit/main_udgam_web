@@ -409,21 +409,4 @@ export const EVENTS: FestEvent[] = [
     taglines: ["Two to hold one.", "Press in pair to move.", "Stick together, move as one!"],
     rulebookPdf: "/rulebooks/balloon-pair-race.pdf",
   },
-  {
-    id: "fill-and-burst",
-    name: "Fill & Burst the Balloon",
-    tier: "regular",
-    category: "games",
-    fee: 60,
-    feeUnit: "team",
-    teamSize: { min: 4, max: 5 },
-    taglines: [
-      "Catch n' splash n' win.",
-      "Fill, aim, throw, repeat.",
-      "Can I pop this on you?",
-      "Let the splash begin!",
-    ],
-    docUrl: DOC("10ks3HiBXkjX-6R5NMs7qaBhgKSIEGs-A28bJmBrDI5w", "edit?usp=drivesdk"),
-    rulebookPdf: "/rulebooks/fill-and-burst.pdf",
-  },
 ];

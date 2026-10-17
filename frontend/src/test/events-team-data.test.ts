@@ -23,9 +23,9 @@ describe("events data", () => {
     expect(byId("food-fiesta")?.fee).toBe(0); // no fee in the budget sheet -> free (organisers' call)
   });
 
-  it("links a rulebook PDF that really exists (and is compressed) for 23 events", () => {
+  it("links a rulebook PDF that really exists (and is compressed) for 22 events", () => {
     const withBook = EVENTS.filter((e) => e.rulebookPdf);
-    expect(withBook).toHaveLength(23);
+    expect(withBook).toHaveLength(22);
     expect(EVENTS.find((e) => e.id === "guess-the-juice")).not.toHaveProperty("rulebookPdf");
     for (const e of withBook) {
       const file = resolve(__dirname, "../../public", `.${e.rulebookPdf}`);
