@@ -1,0 +1,830 @@
+/* ============================================================
+   Sponsors page – Udgam 2K26
+   ============================================================ */
+
+.udgam-sponsors {
+  --font-display: "Fraunces", Georgia, serif;
+  --font-serif: var(--font-display);
+  --font-sans: "Quicksand", system-ui, sans-serif;
+  font-family: var(--font-sans);
+}
+
+.udgam-sponsors.sponsors-page-root {
+  z-index: 2;
+  --lake-ink: oklch(30% 0.07 248);
+  --lake: oklch(50% 0.12 240);
+  --sky: oklch(74% 0.11 232);
+  --sakura: oklch(66% 0.15 355);
+  --spring: oklch(72% 0.14 135);
+  --foreground: var(--lake-ink);
+  --muted-foreground: oklch(48% 0.06 240);
+  --border: oklch(86% 0.04 230 / 0.7);
+  --ring: var(--sky);
+  --blossom: oklch(86% 0.08 355);
+  --blossom-deep: var(--sakura);
+  --gradient-blossom: linear-gradient(
+    120deg,
+    var(--lake) 10%,
+    oklch(60% 0.13 300) 55%,
+    var(--sakura) 90%
+  );
+  --background: oklch(97% 0.02 230);
+  min-height: 100vh;
+  color: var(--foreground);
+  background: 0 0;
+  padding: 130px 24px 90px;
+  position: relative;
+  overflow-x: clip;
+}
+
+@media (width <= 768px) {
+  .udgam-sponsors.sponsors-page-root {
+    padding: 108px 16px 60px;
+  }
+}
+
+/* ── Backdrop ────────────────────────────────────────────────── */
+
+.udgam-sponsors .sponsors-backdrop {
+  z-index: -1;
+  pointer-events: none;
+  background: oklch(86% 0.06 235);
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.udgam-sponsors .sb-world {
+  transform: translate3d(calc(var(--mx, 0) * -12px), calc(var(--my, 0) * -8px), 0);
+  position: absolute;
+  inset: -4vh -3vw;
+}
+
+.udgam-sponsors .sb-panorama {
+  -webkit-user-select: none;
+  user-select: none;
+  width: max(100%, 95vh);
+  max-width: none;
+  height: auto;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+.udgam-sponsors .sb-veil {
+  background:
+    radial-gradient(70% 55% at 50% 45%, oklch(99% 0.01 230 / 0.28), #0000 75%),
+    linear-gradient(
+      oklch(97% 0.02 230 / 0.45) 0%,
+      oklch(97% 0.02 230 / 0.18) 45%,
+      oklch(97% 0.025 200 / 0.32) 100%
+    );
+  position: absolute;
+  inset: 0;
+}
+
+.udgam-sponsors .sb-petals {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
+.udgam-sponsors .sb-petal {
+  top: -6vh;
+  left: var(--x);
+  width: var(--size);
+  aspect-ratio: 1 / 1.35;
+  opacity: 0.75;
+  filter: blur(var(--blur));
+  animation:
+    sb-fall var(--fall) linear infinite,
+    sb-sway var(--sway) ease-in-out infinite alternate;
+  animation-delay: var(--delay), calc(var(--delay) / 3);
+  background: linear-gradient(135deg, oklch(95% 0.04 355), oklch(82% 0.1 355));
+  border-radius: 80% 0;
+  position: absolute;
+}
+
+@keyframes sb-fall {
+  to {
+    translate: 0 112vh;
+  }
+}
+
+@keyframes sb-sway {
+  0% {
+    transform: translate(-26px) rotate(-30deg);
+  }
+  to {
+    transform: translate(26px) rotate(40deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .udgam-sponsors .sb-petals {
+    display: none;
+  }
+  .udgam-sponsors .sb-world {
+    transform: none;
+  }
+}
+
+/* ── Layout ──────────────────────────────────────────────────── */
+
+.udgam-sponsors .sponsors-hierarchical-layout {
+  z-index: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 52px;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  position: relative;
+}
+
+/* ── Page header ─────────────────────────────────────────────── */
+
+.udgam-sponsors .sponsors-page-header {
+  text-align: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+}
+
+.udgam-sponsors .sponsors-header-pill {
+  font-family: var(--font-sans);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blossom-deep);
+  border: 1px solid var(--border);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 14px -4px color-mix(in oklab, var(--blossom-deep) 20%, transparent);
+  background: oklch(100% 0 0 / 0.85);
+  border-radius: 9999px;
+  padding: 6px 18px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.udgam-sponsors .sponsors-page-title {
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
+  background: var(--gradient-blossom);
+  color: #0000;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 12px oklch(100% 0 0 / 0.9));
+  -webkit-background-clip: text;
+  background-clip: text;
+  margin: 0;
+  font-size: clamp(2.4rem, 4.8vw, 3.8rem);
+  font-weight: 800;
+}
+
+.udgam-sponsors .sponsors-page-subtitle {
+  font-family: var(--font-sans);
+  color: var(--muted-foreground);
+  text-wrap: balance;
+  margin: 4px 0 0;
+  font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+  line-height: 1.6;
+}
+
+/* ── Filter pills ────────────────────────────────────────────── */
+
+.udgam-sponsors .sponsors-filters-bar {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+}
+
+.udgam-sponsors .sponsor-pill {
+  border: 1.5px solid var(--border);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-family: var(--font-sans);
+  color: var(--foreground);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  background: oklch(99% 0.01 230 / 0.8);
+  border-radius: 9999px;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 18px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  transition: all 0.25s;
+  display: inline-flex;
+}
+
+.udgam-sponsors .sponsor-pill:hover {
+  border-color: var(--sky);
+  background: oklch(98% 0.02 230 / 0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px -4px oklch(50% 0.12 240 / 0.25);
+}
+
+.udgam-sponsors .sponsor-pill.active {
+  background: var(--gradient-blossom);
+  color: #fff;
+  border-color: #0000;
+  box-shadow: 0 6px 24px -6px oklch(50% 0.12 240 / 0.45);
+}
+
+.udgam-sponsors .sponsor-pill-icon {
+  font-size: 1.05rem;
+}
+
+/* ── Featured section ────────────────────────────────────────── */
+
+.udgam-sponsors .sponsors-featured-section {
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  display: flex;
+}
+
+.udgam-sponsors .sponsors-section-header {
+  text-align: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  display: flex;
+}
+
+.udgam-sponsors .sponsors-section-heading {
+  font-family: var(--font-serif);
+  color: var(--lake);
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 14px oklch(100% 0 0 / 0.9);
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  font-weight: 800;
+  display: inline-flex;
+}
+
+.udgam-sponsors .sponsors-section-heading::before,
+.udgam-sponsors .sponsors-section-heading::after {
+  content: "";
+  background: linear-gradient(90deg, transparent, var(--ring));
+  width: 38px;
+  height: 2px;
+  display: inline-block;
+}
+
+.udgam-sponsors .sponsors-section-heading::after {
+  background: linear-gradient(90deg, var(--ring), transparent);
+}
+
+.udgam-sponsors .sponsors-section-sub {
+  color: var(--muted-foreground);
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.udgam-sponsors .sponsors-pair-row {
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 48px;
+  width: 100%;
+  display: flex;
+}
+
+.udgam-sponsors .sponsors-card-slot {
+  flex: 0 330px;
+  justify-content: center;
+  align-self: stretch;
+  width: 100%;
+  max-width: 330px;
+  display: flex;
+}
+
+@media (width <= 768px) {
+  .udgam-sponsors .sponsors-pair-row {
+    gap: 32px;
+  }
+}
+
+/* ── Category sections ───────────────────────────────────────── */
+
+.udgam-sponsors .sponsors-categories-container {
+  flex-direction: column;
+  align-items: center;
+  gap: 56px;
+  width: 100%;
+  display: flex;
+}
+
+.udgam-sponsors .sponsor-category-section {
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  display: flex;
+}
+
+.udgam-sponsors .sponsor-category-header {
+  text-align: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  display: flex;
+}
+
+.udgam-sponsors .sponsor-category-title {
+  font-family: var(--font-serif);
+  color: var(--lake);
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 14px oklch(100% 0 0 / 0.9);
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-size: clamp(1.4rem, 2.4vw, 1.85rem);
+  font-weight: 700;
+  display: inline-flex;
+}
+
+.udgam-sponsors .sponsor-category-title::before,
+.udgam-sponsors .sponsor-category-title::after {
+  content: "";
+  background: linear-gradient(90deg, transparent, var(--ring));
+  width: 28px;
+  height: 1.5px;
+  display: inline-block;
+}
+
+.udgam-sponsors .sponsor-category-title::after {
+  background: linear-gradient(90deg, var(--ring), transparent);
+}
+
+.udgam-sponsors .sponsor-category-icon {
+  font-size: 1.4rem;
+}
+
+.udgam-sponsors .sponsor-category-description {
+  color: var(--muted-foreground);
+  max-width: 520px;
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.udgam-sponsors .sponsor-category-cards {
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 40px;
+  width: 100%;
+  display: flex;
+}
+
+/* ── Sponsor pass card ───────────────────────────────────────── */
+
+.udgam-sponsors .sponsor-pass-card-wrapper {
+  perspective: 850px;
+  touch-action: manipulation;
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  --pointer-from-center: 0;
+  --pointer-from-top: 0.5;
+  --pointer-from-left: 0.5;
+  --card-opacity: 0;
+  --rotate-x: 0deg;
+  --rotate-y: 0deg;
+  --behind-glow-size: 60%;
+  flex-direction: column;
+  width: 100%;
+  max-width: 330px;
+  height: 100%;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  position: relative;
+  transform: translateZ(0.1px);
+}
+
+.udgam-sponsors .sponsor-behind-glow {
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+    var(--behind-glow-color, #f5b7296b) 0%,
+    transparent var(--behind-glow-size, 60%)
+  );
+  filter: blur(30px) saturate(1.4);
+  opacity: calc(0.9 * var(--card-opacity, 0));
+  border-radius: 34px;
+  transition:
+    opacity 0.24s,
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 0.24s;
+  position: absolute;
+  inset: -16px;
+  transform: scale(0.96);
+}
+
+.udgam-sponsors .sponsor-pass-card-wrapper:hover {
+  --card-opacity: 1;
+}
+
+.udgam-sponsors .sponsor-pass-card-wrapper:hover .sponsor-behind-glow {
+  opacity: 1;
+  filter: blur(36px) saturate(1.6);
+  transform: scale(1.08);
+}
+
+.udgam-sponsors .sponsor-pass-shell {
+  z-index: 1;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: relative;
+}
+
+.udgam-sponsors .sp-card {
+  text-align: center;
+  border: 1.5px solid var(--border);
+  width: 100%;
+  height: 100%;
+  min-height: 530px;
+  color: var(--foreground);
+  box-shadow:
+    color-mix(in oklab, var(--lake) 22%, transparent)
+      calc((var(--pointer-from-left, 0.5) * 12px) - 6px)
+      calc((var(--pointer-from-top, 0.5) * 16px) - 8px)
+      30px
+      -8px;
+  transform: translateZ(0) rotateX(var(--rotate-y, 0deg)) rotateY(var(--rotate-x, 0deg));
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  background: oklch(99.5% 0.006 230 / 0.96);
+  border-radius: 26px;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 22px 26px;
+  transition:
+    transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.3s,
+    box-shadow 0.3s;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-card {
+  border-color: color-mix(in oklab, var(--tier-accent, var(--sky)) 55%, white);
+  box-shadow:
+    0 26px 54px -12px color-mix(in oklab, var(--behind-glow-color) 45%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--tier-accent, var(--sky)) 35%, transparent);
+  transition: none;
+}
+
+/* Glare */
+.udgam-sponsors .sp-glare {
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: soft-light;
+  background: radial-gradient(
+    circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+    #ffffffd9 0%,
+    #fff3 35%,
+    transparent 65%
+  );
+  opacity: var(--card-opacity, 0);
+  transition: opacity 0.22s;
+  position: absolute;
+  inset: 0;
+}
+
+/* Decorative art */
+.udgam-sponsors .sp-art {
+  pointer-events: none;
+  z-index: 0;
+  height: 24%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+
+.udgam-sponsors .sp-art-wave {
+  opacity: 0.65;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+
+.udgam-sponsors .sp-art-blossom {
+  opacity: 0.5;
+  font-size: 1.1rem;
+  position: absolute;
+  bottom: 14%;
+  right: 8%;
+}
+
+/* Tag */
+.udgam-sponsors .sp-tag {
+  font-family: var(--font-serif);
+  letter-spacing: 0.16em;
+  color: var(--lake);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  max-width: 90%;
+  height: 18px;
+  margin-bottom: 14px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  line-height: 18px;
+  overflow: hidden;
+}
+
+/* Showcase frame */
+.udgam-sponsors .sp-showcase-frame {
+  aspect-ratio: 16 / 10;
+  border: 1.5px solid var(--border);
+  background: oklch(96% 0.02 230);
+  border-radius: 18px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 165px;
+  margin-bottom: 16px;
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s,
+    border-color 0.3s;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(14px);
+  box-shadow: inset 0 2px 6px #0000000d;
+}
+
+.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-showcase-frame {
+  border-color: color-mix(in oklab, var(--tier-accent) 50%, white);
+  transform: translateZ(28px) scale(1.02);
+  box-shadow: 0 14px 28px -6px #00000040;
+}
+
+.udgam-sponsors .sp-showcase-logo {
+  object-fit: contain;
+  -webkit-user-select: none;
+  user-select: none;
+  max-width: 85%;
+  max-height: 80%;
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 0.3s;
+  display: block;
+}
+
+.udgam-sponsors .sp-logo-quarks-tech {
+  filter: drop-shadow(0 4px 14px #2bb6734d);
+  width: 85%;
+  height: auto;
+  max-height: 68px;
+}
+
+.udgam-sponsors .sp-logo-dominos {
+  object-fit: contain;
+  filter: drop-shadow(0 6px 18px #0064912e);
+  width: auto;
+  max-width: 90%;
+  height: 138px;
+  max-height: 88%;
+}
+
+.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-showcase-logo {
+  transform: scale(1.06);
+}
+
+.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-quarks-tech {
+  filter: drop-shadow(0 6px 20px #2bb67380);
+}
+
+.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-dominos {
+  filter: drop-shadow(0 8px 24px #e3183740) drop-shadow(0 4px 14px #0064914d);
+}
+
+.udgam-sponsors .sp-showcase-overlay {
+  pointer-events: none;
+  opacity: 0.4;
+  background: linear-gradient(135deg, #ffffff40 0%, #ffffff08 40%, #0000 60%);
+  transition: opacity 0.3s;
+  position: absolute;
+  inset: 0;
+}
+
+.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-showcase-overlay {
+  opacity: 0.85;
+}
+
+/* Fallback (no logo) */
+.udgam-sponsors .sp-showcase-fallback {
+  color: var(--sky);
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  display: flex;
+}
+
+.udgam-sponsors .sp-fallback-icon {
+  font-size: 2.2rem;
+}
+
+.udgam-sponsors .sp-fallback-initials {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+/* Title */
+.udgam-sponsors .sp-title {
+  font-family: var(--font-serif);
+  color: #0b0b0b;
+  justify-content: center;
+  align-items: center;
+  height: 32px;
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  transition:
+    transform 0.35s,
+    color 0.3s;
+  display: flex;
+  transform: translateZ(12px);
+}
+
+.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-title {
+  color: #000;
+  transform: translateZ(18px);
+}
+
+/* Badge row */
+.udgam-sponsors .sp-badge-row {
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  margin-top: 8px;
+  transition: transform 0.35s;
+  display: flex;
+  transform: translateZ(12px);
+}
+
+.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-badge-row {
+  transform: translateZ(18px);
+}
+
+.udgam-sponsors .sp-tier-badge {
+  font-family: var(--font-serif);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: oklch(100% 0 0 / 0.85);
+  border: 1px solid;
+  border-radius: 9999px;
+  align-items: center;
+  padding: 3px 10px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  display: inline-flex;
+  box-shadow: 0 2px 6px #0000000a;
+}
+
+.udgam-sponsors .sp-category-badge {
+  font-family: var(--font-sans);
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+  background: oklch(95% 0.02 230 / 0.85);
+  border-radius: 9999px;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  display: inline-flex;
+}
+
+/* Description */
+.udgam-sponsors .sp-desc {
+  color: var(--muted-foreground);
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  text-align: center;
+  -webkit-box-orient: vertical;
+  height: 60px;
+  margin: 12px 0 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  transition: transform 0.35s;
+  display: -webkit-box;
+  overflow: hidden;
+  transform: translateZ(8px);
+}
+
+.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-desc {
+  transform: translateZ(14px);
+}
+
+/* CTA button */
+.udgam-sponsors .sp-btn {
+  z-index: 2;
+  width: 100%;
+  font-family: var(--font-sans);
+  color: #fff;
+  background: var(--gradient-blossom);
+  cursor: pointer;
+  box-shadow: 0 6px 18px -4px color-mix(in oklab, var(--blossom-deep) 60%, transparent);
+  border-radius: 9999px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding: 11px 20px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: inline-flex;
+  position: relative;
+  transform: translateZ(16px);
+}
+
+.udgam-sponsors .sp-btn:hover {
+  box-shadow: 0 12px 28px -4px color-mix(in oklab, var(--blossom-deep) 85%, transparent);
+  filter: brightness(1.12);
+  transform: translateZ(32px) translateY(-3px) scale(1.02);
+}
+
+.udgam-sponsors .sp-btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.udgam-sponsors .sp-btn-arrow {
+  font-size: 1.05rem;
+  transition: transform 0.2s;
+}
+
+.udgam-sponsors .sp-btn:hover .sp-btn-arrow {
+  transform: translate(3px, -3px);
+}
+
+/* ── Empty category ──────────────────────────────────────────── */
+
+.udgam-sponsors .sponsor-empty-category {
+  text-align: center;
+  color: var(--muted-foreground);
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 40px 24px;
+  display: flex;
+}
+
+.udgam-sponsors .sponsor-empty-icon {
+  opacity: 0.6;
+  font-size: 2rem;
+}
+
+.udgam-sponsors .sponsor-empty-text {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .udgam-sponsors .sp-card {
+    transform: none !important;
+  }
+  .udgam-sponsors .sponsor-behind-glow {
+    display: none;
+  }
+}
