@@ -41,7 +41,7 @@ export interface CommitteeCategory {
 export const teamMembers: TeamMember[] = [
   {
     id: "sumit-prasad",
-    name: "Sumit Prasad",
+    name: "Sumit Kr. Prasad",
     role: "President",
     badgeText: "President",
     badgeType: "president",
