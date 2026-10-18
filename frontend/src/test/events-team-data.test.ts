@@ -17,7 +17,7 @@ describe("events data", () => {
 
   it("has the fees from the event-management sheet", () => {
     const byId = (id: string) => EVENTS.find((e) => e.id === id);
-    expect(byId("treasure-hunt")).toMatchObject({ fee: 250, feeUnit: "team" });
+    expect(byId("treasure-hunt")).toMatchObject({ fee: 100, feeUnit: "team" });
     expect(byId("squid-games")).toMatchObject({ fee: 30, feeUnit: "person" });
     expect(byId("dance-competition")?.fee).toBe(0);
     expect(byId("food-fiesta")?.fee).toBe(0); // no fee in the budget sheet -> free (organisers' call)

@@ -62,7 +62,7 @@ export const EVENTS: FestEvent[] = [
     name: "Treasure Hunt",
     tier: "major",
     category: "games",
-    fee: 250,
+    fee: 100,
     feeUnit: "team",
     teamSize: { min: 3, max: 3 },
     taglines: [
@@ -77,7 +77,7 @@ export const EVENTS: FestEvent[] = [
     name: "IPL Auction",
     tier: "major",
     category: "games",
-    fee: 50,
+    fee: 200,
     feeUnit: "team",
     teamSize: { min: 4, max: 6 },
     description: "Auction for IPL teams.",

@@ -18,8 +18,8 @@ export interface EventRule {
 
 export const EVENTS: readonly EventRule[] = [
   { id: "spoil-the-tshirt", name: "Spoil the T-shirt", tier: "major", fee: 150, feeUnit: "team", teamSize: { min: 3, max: 3 } },
-  { id: "treasure-hunt", name: "Treasure Hunt", tier: "major", fee: 250, feeUnit: "team", teamSize: { min: 3, max: 3 } },
-  { id: "ipl-auction", name: "IPL Auction", tier: "major", fee: 50, feeUnit: "team", teamSize: { min: 4, max: 6 } },
+  { id: "treasure-hunt", name: "Treasure Hunt", tier: "major", fee: 100, feeUnit: "team", teamSize: { min: 3, max: 3 } },
+  { id: "ipl-auction", name: "IPL Auction", tier: "major", fee: 200, feeUnit: "team", teamSize: { min: 4, max: 6 } },
   { id: "ramp-walk", name: "Ramp Walk", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 } },
   { id: "housie", name: "Housie (Bingo)", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 } },
   { id: "dance-competition", name: "Dance Competition", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 7 } },

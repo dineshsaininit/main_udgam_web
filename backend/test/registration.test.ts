@@ -90,7 +90,7 @@ describe("registration validation", () => {
   });
 
   it("computes the amount from event config only", () => {
-    expect(amountPaise(event("treasure-hunt"), 4)).toBe(25000); // per team
+    expect(amountPaise(event("treasure-hunt"), 4)).toBe(10000); // per team
     expect(amountPaise(event("squid-games"), 1)).toBe(3000); // per person
     expect(amountPaise(event("cup-pong"), 1)).toBe(0); // free
   });
@@ -198,7 +198,7 @@ describe("registration service", () => {
         : []; // UPDATE ... RETURNING returns no row
     createOrder.mockResolvedValue({
       id: "order_LOST1",
-      amount: 25000,
+      amount: 10000,
       currency: "INR",
       status: "created",
     });
@@ -220,7 +220,7 @@ describe("registration service", () => {
           : [];
     createOrder.mockResolvedValue({
       id: "order_ABC123",
-      amount: 25000,
+      amount: 10000,
       currency: "INR",
       status: "created",
     });
@@ -228,12 +228,12 @@ describe("registration service", () => {
     const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
     const r = await startRegistration({ ...input("treasure-hunt", m), amount: 1 } as never); // client "amount" ignored
     expect(createOrder).toHaveBeenCalledWith(
-      expect.objectContaining({ amountPaise: 25000, receipt: id }),
+      expect.objectContaining({ amountPaise: 10000, receipt: id }),
     );
     expect(r).toMatchObject({
       ok: true,
       status: "payment_required",
-      order: { id: "order_ABC123", amount: 25000 },
+      order: { id: "order_ABC123", amount: 10000 },
     });
     expect(dbCalls.some((q) => q.includes("UPDATE registrations"))).toBe(true);
   });
