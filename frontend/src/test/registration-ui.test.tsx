@@ -62,6 +62,16 @@ describe("registration form", () => {
     expect(screen.getAllByText("Name")).toHaveLength(3);
     expect(screen.queryByText("+ Add member")).not.toBeInTheDocument();
   });
+
+  it("singing takes a group like dance: team name + leader, members optional", () => {
+    const singing = EVENTS.find((e) => e.id === "singing-competition")!;
+    render(<RegistrationModal event={singing} onClose={() => {}} onRegistered={() => {}} />);
+    expect(screen.getByText("Team name")).toBeInTheDocument();
+    expect(screen.getByText("Team leader")).toBeInTheDocument();
+    // only the leader is required; up to 6 more can be added
+    expect(screen.getAllByText("Full name")).toHaveLength(1);
+    expect(screen.getByText("+ Add member")).toBeInTheDocument();
+  });
 });
 
 describe("receipt", () => {

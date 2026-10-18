@@ -23,7 +23,7 @@ const OFFICIAL: Record<string, [number, number]> = {
   photography: [1, 1],
   rangoli: [4, 4],
   "short-movie": [1, 3],
-  "singing-competition": [1, 1],
+  "singing-competition": [1, 7], // solo or a group of up to 7, like dance
   "spoil-the-tshirt": [3, 3],
   "squid-games": [1, 1],
   "string-maze": [1, 1],

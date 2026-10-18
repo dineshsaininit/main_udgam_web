@@ -149,7 +149,7 @@ export const EVENTS: FestEvent[] = [
     tier: "major",
     category: "performance",
     fee: 0,
-    teamSize: { min: 1, max: 1 },
+    teamSize: { min: 1, max: 7 },
     taglines: ["Sing your heart out. Touch the soul.", "Amplify your voice. Electrify the crowd."],
     docUrl: DOC("1e5-mq9BAFEiCco7V1LSZt8cZ7-1HGBvsz1WJbWh3xtk", "edit?usp=drivesdk"),
     rulebookPdf: "/rulebooks/singing-competition.pdf",
