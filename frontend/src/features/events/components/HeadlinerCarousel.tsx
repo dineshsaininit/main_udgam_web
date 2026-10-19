@@ -3,12 +3,12 @@ import { cssVars } from "@/lib/css-vars";
 import { prefersReducedMotion } from "../utils";
 import { ArrowIcon } from "./eventIcons";
 
-const AUTOPLAY_MS = 4200;
-const SWIPE_PX = 40;
+const AUTOPLAY_MS = 4600;
+const SWIPE_THRESHOLD = 36;
 
 /**
- * Coverflow row: three slides visible, the centre one emphasised.
- * Auto-advances right to left; pauses on hover, focus, swipe, an open drawer or when off-screen.
+ * Premium Coverflow Carousel with silky-smooth 3D depth, responsive touch swipe,
+ * and elegant indicator navigation.
  */
 export default function HeadlinerCarousel<T>({
   items,
@@ -23,7 +23,6 @@ export default function HeadlinerCarousel<T>({
   paused?: boolean;
   label: string;
 }) {
-  // with fewer than five slides the wrap-around would show through, so loop a doubled list
   const slides = items.length < 5 ? [...items, ...items] : items;
   const n = slides.length;
   const [active, setActive] = useState(0);
@@ -31,16 +30,24 @@ export default function HeadlinerCarousel<T>({
   const [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState(true);
   const [docHidden, setDocHidden] = useState(false);
-  // decided on the client only, so the server render and hydration agree
   const [reducedMotion, setReducedMotion] = useState(false);
+
+  // Smooth drag tracking
+  const [dragX, setDragX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartRef = useRef<{ x: number; y: number } | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const swipeRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => setReducedMotion(prefersReducedMotion()), []);
 
-  const go = useCallback((delta: number) => setActive((i) => (((i + delta) % n) + n) % n), [n]);
+  const go = useCallback(
+    (delta: number) => {
+      setDragX(0);
+      setActive((i) => (((i + delta) % n) + n) % n);
+    },
+    [n],
+  );
 
-  // a filter change can shrink the list under the current index
   useEffect(() => {
     setActive(0);
   }, [items]);
@@ -61,7 +68,7 @@ export default function HeadlinerCarousel<T>({
     return () => document.removeEventListener("visibilitychange", onVis);
   }, []);
 
-  const running = !paused && !hovered && !focused && visible && !docHidden && !reducedMotion;
+  const running = !paused && !hovered && !focused && !isDragging && visible && !docHidden && !reducedMotion;
   useEffect(() => {
     if (!running) return undefined;
     const t = setInterval(() => go(1), AUTOPLAY_MS);
@@ -69,16 +76,36 @@ export default function HeadlinerCarousel<T>({
   }, [running, go, active]);
 
   const onPointerDown = (e: PointerEvent) => {
-    if (e.pointerType === "mouse") return;
-    swipeRef.current = { x: e.clientX, y: e.clientY };
+    dragStartRef.current = { x: e.clientX, y: e.clientY };
+    setIsDragging(true);
   };
+
+  const onPointerMove = (e: PointerEvent) => {
+    if (!dragStartRef.current || !isDragging) return;
+    const dx = e.clientX - dragStartRef.current.x;
+    const dy = e.clientY - dragStartRef.current.y;
+    // If vertical scroll dominates, don't hijack horizontal drag
+    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dx) < 15) return;
+    setDragX(dx);
+  };
+
   const onPointerUp = (e: PointerEvent) => {
-    const start = swipeRef.current;
-    swipeRef.current = null;
-    if (!start) return;
-    const dx = e.clientX - start.x;
-    if (Math.abs(dx) > SWIPE_PX && Math.abs(dx) > Math.abs(e.clientY - start.y))
+    if (!dragStartRef.current) return;
+    const dx = e.clientX - dragStartRef.current.x;
+    dragStartRef.current = null;
+    setIsDragging(false);
+
+    if (Math.abs(dx) > SWIPE_THRESHOLD) {
       go(dx < 0 ? 1 : -1);
+    } else {
+      setDragX(0);
+    }
+  };
+
+  const onPointerCancel = () => {
+    dragStartRef.current = null;
+    setIsDragging(false);
+    setDragX(0);
   };
 
   const half = Math.floor(n / 2);
@@ -103,20 +130,20 @@ export default function HeadlinerCarousel<T>({
     >
       <div
         ref={stageRef}
-        className="ep-carousel-stage"
+        className={`ep-carousel-stage ${isDragging ? "is-dragging" : ""}`}
         onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
-        onPointerCancel={() => {
-          swipeRef.current = null;
-        }}
+        onPointerCancel={onPointerCancel}
+        style={cssVars({ "--drag-shift": `${dragX * 0.35}px` })}
       >
         {slides.map((item, i) => {
-          // signed distance from the centre slide, wrapped into [-half, n - half)
           let offset = (((i - active) % n) + n) % n;
           if (offset >= n - half) offset -= n;
           const pos = Math.max(-2, Math.min(2, offset));
           const isCenter = offset === 0;
           const isSide = Math.abs(offset) === 1;
+
           return (
             <div
               key={`${getKey(item)}-${i}`}
@@ -125,7 +152,6 @@ export default function HeadlinerCarousel<T>({
               aria-hidden={!isCenter}
               onClick={isSide ? () => go(offset) : undefined}
             >
-              {/* inert content so the side slide's click lands on the wrapper and centres it */}
               <div className="ep-slide-inner" inert={!isCenter}>
                 {renderItem(item, i % items.length)}
               </div>
@@ -134,15 +160,18 @@ export default function HeadlinerCarousel<T>({
         })}
       </div>
 
+      {/* Navigation Controls */}
       <div className="ep-carousel-nav">
         <button
           type="button"
-          className="ep-icon-btn"
+          className="ep-icon-btn ep-carousel-btn"
           onClick={() => go(-1)}
           aria-label="Previous headliner"
+          title="Previous (←)"
         >
           <ArrowIcon className="ep-carousel-prev" />
         </button>
+
         <div className="ep-carousel-dots" role="tablist" aria-label="Choose headliner">
           {items.map((item, i) => (
             <button
@@ -164,11 +193,13 @@ export default function HeadlinerCarousel<T>({
             </button>
           ))}
         </div>
+
         <button
           type="button"
-          className="ep-icon-btn"
+          className="ep-icon-btn ep-carousel-btn"
           onClick={() => go(1)}
           aria-label="Next headliner"
+          title="Next (→)"
         >
           <ArrowIcon />
         </button>

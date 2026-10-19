@@ -429,32 +429,15 @@ function HeadlinerTile({
 
       <div className="ep-tile-actions">
         <RegisterButton registered={registered} onRegister={onRegister} eventName={event.name} />
-        {event.rulebookPdf ? (
-          <button
-            type="button"
-            className="ep-details-btn ep-rulebook-direct-btn"
-            onClick={() => onOpenRulebook(event)}
-            title={`View ${event.name} Rulebook`}
-          >
-            <BookIcon className="ep-btn-icon" />
-            Rulebook
-          </button>
-        ) : event.docUrl ? (
-          <a
-            href={event.docUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ep-details-btn ep-rulebook-direct-btn"
-            title={`Open ${event.name} Rulebook`}
-          >
-            <DocIcon className="ep-btn-icon" />
-            Rulebook
-          </a>
-        ) : (
-          <button type="button" className="ep-details-btn" onClick={onOpen}>
-            Details <ArrowIcon className="ep-btn-icon" />
-          </button>
-        )}
+        <button
+          type="button"
+          className="ep-details-btn ep-rulebook-direct-btn"
+          onClick={onOpen}
+          title={`View ${event.name} Rules & Details`}
+        >
+          <BookIcon className="ep-btn-icon" />
+          Rules &amp; Details
+        </button>
       </div>
     </article>
   );
@@ -498,28 +481,15 @@ function TicketCard({ event, registered, onRegister, onOpen, onOpenRulebook }: C
             eventName={event.name}
             size="sm"
           />
-          {event.rulebookPdf ? (
-            <button
-              type="button"
-              className="ep-ticket-rb-btn"
-              onClick={() => onOpenRulebook(event)}
-              title={`View ${event.name} Rulebook`}
-            >
-              <BookIcon className="ep-btn-icon" />
-              <span>Rules</span>
-            </button>
-          ) : event.docUrl ? (
-            <a
-              href={event.docUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ep-ticket-rb-btn"
-              title={`Open ${event.name} Rulebook`}
-            >
-              <DocIcon className="ep-btn-icon" />
-              <span>Rules</span>
-            </a>
-          ) : null}
+          <button
+            type="button"
+            className="ep-ticket-rb-btn"
+            onClick={onOpen}
+            title={`View ${event.name} Rules & Details`}
+          >
+            <BookIcon className="ep-btn-icon" />
+            <span>Rules</span>
+          </button>
         </div>
       </div>
     </article>

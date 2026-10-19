@@ -619,16 +619,17 @@
   width: 64%;
   aspect-ratio: 1;
   margin-top: 9%;
-  padding: 5%;
-  border: 1px solid #d3c7c9;
+  padding: 0;
+  border: 1.5px solid #d3c7c9;
   border-radius: 50%;
-  background: #fff;
+  background: transparent;
   transform: translateZ(14px);
+  overflow: hidden;
 }
 .udgam-team .tc-avatar {
   width: 100%;
   height: 100%;
-  border-radius: 38%;
+  border-radius: 50%;
   overflow: hidden;
   background: #ece8e8;
   display: flex;
