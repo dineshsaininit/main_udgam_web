@@ -328,16 +328,6 @@ export const EVENTS: FestEvent[] = [
     rulebookPdf: "/rulebooks/rangoli.pdf",
   },
   {
-    id: "tug-of-war",
-    name: "Tug of War",
-    tier: "regular",
-    category: "sports",
-    fee: 0,
-    teamSize: { min: 5, max: 5 },
-    description: "Pull the rope and cross the winning line.",
-    taglines: ["It's not personal… until you lose.", "Aaj rassi nahi, izzat kheechni hai."],
-  },
-  {
     id: "photography",
     name: "Photography",
     tier: "regular",

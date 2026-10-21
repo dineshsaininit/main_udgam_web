@@ -37,7 +37,6 @@ export const EVENTS: readonly EventRule[] = [
   { id: "three-leg-tie", name: "Three-Leg Tie", tier: "regular", fee: 30, feeUnit: "team", teamSize: { min: 2, max: 2 } },
   { id: "musical-chair", name: "Musical Chair", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 } },
   { id: "rangoli", name: "Rangoli", tier: "regular", fee: 80, feeUnit: "team", teamSize: { min: 4, max: 4 } },
-  { id: "tug-of-war", name: "Tug of War", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 5, max: 5 } },
   { id: "photography", name: "Photography", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 } },
   { id: "food-eating-challenge", name: "Food Eating Challenge", tier: "regular", fee: 50, feeUnit: "person", teamSize: { min: 1, max: 1 } },
   { id: "cup-pong", name: "Cup Pong", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 } },

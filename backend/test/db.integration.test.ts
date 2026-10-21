@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { PGlite } from "@electric-sql/pglite";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { EVENTS } from "../src/data/events";
 
 let pg: PGlite;
 const run = (text: string, params: unknown[] = []) => pg.query(text, params).then((r) => r.rows);
@@ -162,7 +163,7 @@ describe("admin queries", () => {
       confirmedParticipants: 2,
       revenuePaise: 0,
     });
-    expect(o.events).toHaveLength(27); // every event listed, even with no registrations
+    expect(o.events).toHaveLength(EVENTS.length); // every event listed, even with no registrations
     expect(o.totals).toMatchObject({
       confirmedTeams: 4,
       confirmedParticipants: 8,
