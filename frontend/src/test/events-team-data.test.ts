@@ -122,6 +122,8 @@ describe("team directory", () => {
       ["kishore-shanker", "Kishore Shanker Kami"],
       ["ankit-rawat", "Ankit Rawat"],
       ["pravesh-sharma", "Pravesh Sharma"],
+      ["lavanya", "Lavanya Srivastav"],
+      ["vishal-prasad", "Vishal Prasad"],
     ] as const) {
       expect(people.find((m) => m.id === id)?.name, id).toBe(name);
       expect(teamPhotoFor(id), id).toMatch(new RegExp(`${id}`));
