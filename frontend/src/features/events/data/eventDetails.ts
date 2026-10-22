@@ -26,6 +26,8 @@ export interface FestEvent {
   teamSize: { min: number; max: number };
   taglines: string[];
   description?: string;
+  prizePool?: string;
+  partner?: string;
   rounds?: string[];
   docUrl?: string;
   /** path to local PDF rulebook served from /public/rulebooks/ */
@@ -247,6 +249,40 @@ export const EVENTS: FestEvent[] = [
     teamSize: { min: 4, max: 4 },
     taglines: ["Drop, loot, survive — Booyah or bust!", "One zone, one winner — are you ready?"],
     rulebookPdf: "/rulebooks/free-fire.pdf",
+  },
+  {
+    id: "bgmi",
+    name: "BGMI",
+    tier: "regular",
+    category: "esports",
+    fee: 0,
+    teamSize: { min: 4, max: 4 },
+    prizePool: "₹12,000",
+    partner: "Krafton",
+    taglines: [
+      "Chicken dinner isn't served — it's earned!",
+      "Drop in, squad up, conquer the battleground!",
+      "Not just a game — it's war!",
+    ],
+    description:
+      "Battlegrounds Mobile India (BGMI) tournament powered by official gaming partner Krafton. Squad of 4 members competing in classic battle royale format. Total winning prize pool: ₹12,000.",
+  },
+  {
+    id: "real-cricket",
+    name: "Real Cricket",
+    tier: "regular",
+    category: "esports",
+    fee: 0,
+    teamSize: { min: 1, max: 1 },
+    prizePool: "₹3,000",
+    partner: "Krafton",
+    taglines: [
+      "Step up to the crease, smash it out of the park!",
+      "Real stakes, authentic cricket action!",
+      "One pitch, one champion!",
+    ],
+    description:
+      "Real Cricket tournament powered by official gaming partner Krafton. Go head-to-head in authentic mobile cricket clashes. Total winning prize pool: ₹3,000.",
   },
   {
     id: "mlbb",

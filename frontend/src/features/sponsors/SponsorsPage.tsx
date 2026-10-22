@@ -61,6 +61,7 @@ const PETALS = Array.from({ length: 14 }, (_, i) =>
 const SPONSOR_LOGOS: Record<string, string> = {
   dominos: "/assets/sponsors/dominos_logo.png",
   "quarks-tech": "/assets/sponsors/quarks_logo.png",
+  krafton: "/assets/sponsors/krafton_logo.svg",
 };
 
 /** Per-brand visual theme overrides for the card frame and glow. */
@@ -74,6 +75,13 @@ const BRAND_THEMES: Record<
     frameBg: "linear-gradient(140deg, #07171e 0%, #0d2830 50%, #081a20 100%)",
     frameBorder: "rgba(43, 182, 115, 0.35)",
     tag: "TITLE TECH PARTNER · UDGAM '26",
+  },
+  krafton: {
+    glow: "rgba(255, 87, 34, 0.55)",
+    accent: "#ff5722",
+    frameBg: "linear-gradient(140deg, #111419 0%, #1e222b 50%, #13151b 100%)",
+    frameBorder: "rgba(255, 87, 34, 0.4)",
+    tag: "OFFICIAL GAMING PARTNER · UDGAM '26",
   },
   dominos: {
     glow: "rgba(227, 24, 55, 0.45)",
@@ -452,6 +460,7 @@ export default function SponsorsPage({ data }: { data: SponsorsData }) {
   const [activeCategory, setActiveCategory] = useState("all");
 
   const quarks = data.sponsors.find((s) => s.id === "quarks-tech");
+  const krafton = data.sponsors.find((s) => s.id === "krafton");
   const dominos = data.sponsors.find((s) => s.id === "dominos");
 
   const displayedCategories =
@@ -491,12 +500,12 @@ export default function SponsorsPage({ data }: { data: SponsorsData }) {
         </nav>
 
         {/* Featured partners (shown only in "All" view) */}
-        {activeCategory === "all" && (quarks || dominos) && (
+        {activeCategory === "all" && (quarks || krafton || dominos) && (
           <section className="sponsors-featured-section" aria-label="Featured Partners">
             <div className="sponsors-section-header">
               <h2 className="sponsors-section-heading">Featured Partners</h2>
               <p className="sponsors-section-sub">
-                Official partners leading the technology and festival experience
+                Official partners leading the technology, gaming, and festival experience
               </p>
             </div>
             <div className="sponsors-pair-row">
@@ -507,6 +516,16 @@ export default function SponsorsPage({ data }: { data: SponsorsData }) {
                     tierLabel={data.tierConfig[quarks.tier]?.label ?? "Title Sponsor"}
                     tierColor={data.tierConfig[quarks.tier]?.color ?? "#00c8ff"}
                     categoryLabel="Technology"
+                  />
+                </div>
+              )}
+              {krafton && (
+                <div className="sponsors-card-slot">
+                  <SponsorPassCard
+                    sponsor={krafton}
+                    tierLabel={data.tierConfig[krafton.tier]?.label ?? "Gaming Partner"}
+                    tierColor={data.tierConfig[krafton.tier]?.color ?? "#ff5722"}
+                    categoryLabel="Gaming"
                   />
                 </div>
               )}

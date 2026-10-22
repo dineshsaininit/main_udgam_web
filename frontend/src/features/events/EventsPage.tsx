@@ -433,10 +433,10 @@ function HeadlinerTile({
           type="button"
           className="ep-details-btn ep-rulebook-direct-btn"
           onClick={onOpen}
-          title={`View ${event.name} Rules & Details`}
+          title={`View ${event.name} Details`}
         >
           <BookIcon className="ep-btn-icon" />
-          Rules &amp; Details
+          {event.rulebookPdf || event.docUrl ? "Rules & Details" : "Event Details"}
         </button>
       </div>
     </article>
@@ -464,6 +464,16 @@ function TicketCard({ event, registered, onRegister, onOpen, onOpenRulebook }: C
           {meta.map((m) => (
             <span key={m}>{m}</span>
           ))}
+          {event.prizePool && (
+            <span className="ep-meta-prize" style={{ color: "#f59e0b", fontWeight: 600 }}>
+              🏆 {event.prizePool}
+            </span>
+          )}
+          {event.partner && (
+            <span className="ep-meta-partner" style={{ color: "#ff5722", fontWeight: 600 }}>
+              🎮 {event.partner}
+            </span>
+          )}
           {event.docUrl && (
             <span className="ep-meta-doc">
               <DocIcon /> Rules doc
@@ -485,10 +495,10 @@ function TicketCard({ event, registered, onRegister, onOpen, onOpenRulebook }: C
             type="button"
             className="ep-ticket-rb-btn"
             onClick={onOpen}
-            title={`View ${event.name} Rules & Details`}
+            title={`View ${event.name} Details`}
           >
             <BookIcon className="ep-btn-icon" />
-            <span>Rules</span>
+            <span>{event.rulebookPdf || event.docUrl ? "Rules" : "Details"}</span>
           </button>
         </div>
       </div>

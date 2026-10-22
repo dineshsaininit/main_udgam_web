@@ -31,6 +31,8 @@ export const EVENTS: readonly EventRule[] = [
   { id: "balloon-burst", name: "Balloon Burst", tier: "regular", fee: 30, feeUnit: "team", teamSize: { min: 2, max: 2 } },
   { id: "squid-games", name: "Squid Games", tier: "regular", fee: 30, feeUnit: "person", teamSize: { min: 1, max: 1 } },
   { id: "free-fire", name: "Free Fire", tier: "regular", fee: 200, feeUnit: "team", teamSize: { min: 4, max: 4 } },
+  { id: "bgmi", name: "BGMI", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 4, max: 4 } },
+  { id: "real-cricket", name: "Real Cricket", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 } },
   { id: "mlbb", name: "MLBB", tier: "regular", fee: 200, feeUnit: "team", teamSize: { min: 5, max: 6 } },
   { id: "efootball", name: "eFootball", tier: "regular", fee: 50, feeUnit: "person", teamSize: { min: 1, max: 1 } },
   { id: "guess-the-juice", name: "Guess the Juice", tier: "regular", fee: 50, feeUnit: "team", teamSize: { min: 1, max: 1 } },

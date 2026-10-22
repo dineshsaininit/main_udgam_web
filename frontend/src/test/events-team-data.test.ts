@@ -43,11 +43,21 @@ describe("events data", () => {
 
   it("lists each e-sports title as its own event", () => {
     const esports = EVENTS.filter((e) => e.category === "esports");
-    expect(esports.map((e) => e.name)).toEqual(["Free Fire", "MLBB", "eFootball"]);
-    for (const e of esports.filter((x) => x.id !== "efootball")) {
+    expect(esports.map((e) => e.name)).toEqual([
+      "Free Fire",
+      "BGMI",
+      "Real Cricket",
+      "MLBB",
+      "eFootball",
+    ]);
+    for (const e of esports.filter(
+      (x) => x.id !== "efootball" && x.id !== "real-cricket" && x.id !== "bgmi",
+    )) {
       expect(e).toMatchObject({ fee: 200, feeUnit: "team" });
     }
     expect(EVENTS.find((e) => e.id === "efootball")).toMatchObject({ fee: 50, feeUnit: "person" });
+    expect(EVENTS.find((e) => e.id === "bgmi")?.fee).toBe(0);
+    expect(EVENTS.find((e) => e.id === "real-cricket")?.fee).toBe(0);
   });
 });
 
@@ -107,6 +117,11 @@ describe("team directory", () => {
       ["aryan-gupta", "Aryan Gupta"],
       ["shivanshu-kumar", "Shivanshu Kumar"],
       ["saysay", "Saysay Hang Limboo"],
+      ["vatan-nagar", "Vatan Nagar"],
+      ["abhinash", "Abinash Chettri"],
+      ["kishore-shanker", "Kishore Shanker Kami"],
+      ["ankit-rawat", "Ankit Rawat"],
+      ["pravesh-sharma", "Pravesh Sharma"],
     ] as const) {
       expect(people.find((m) => m.id === id)?.name, id).toBe(name);
       expect(teamPhotoFor(id), id).toMatch(new RegExp(`${id}`));

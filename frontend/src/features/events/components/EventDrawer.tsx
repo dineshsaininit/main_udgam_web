@@ -161,6 +161,22 @@ export default function EventDrawer({
                       <span className="ep-info-label">Category</span>
                       <strong className="ep-info-val">{cat.label}</strong>
                     </div>
+                    {shown.prizePool && (
+                      <div className="ep-info-card">
+                        <span className="ep-info-label">Prize Pool</span>
+                        <strong className="ep-info-val" style={{ color: "#f59e0b" }}>
+                          {shown.prizePool}
+                        </strong>
+                      </div>
+                    )}
+                    {shown.partner && (
+                      <div className="ep-info-card">
+                        <span className="ep-info-label">Gaming Partner</span>
+                        <strong className="ep-info-val" style={{ color: "#ff5722" }}>
+                          {shown.partner}
+                        </strong>
+                      </div>
+                    )}
                   </div>
                 </section>
 
@@ -239,6 +255,77 @@ export default function EventDrawer({
                         <span>Open Document</span>
                         <ArrowIcon className="ep-btn-icon" />
                       </a>
+                    </div>
+                  </section>
+                ) : shown.partner || shown.prizePool ? (
+                  <section className="ep-drawer-block ep-doc-showcase">
+                    <div
+                      className="ep-doc-card ep-partner-feature-card"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, rgba(255, 87, 34, 0.08) 0%, rgba(20, 20, 25, 0.6) 100%)",
+                        border: "1px solid rgba(255, 87, 34, 0.25)",
+                        padding: "24px",
+                        borderRadius: "16px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "12px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "inline-block",
+                          alignSelf: "flex-start",
+                          background: "rgba(255, 87, 34, 0.18)",
+                          color: "#ff7a45",
+                          padding: "4px 10px",
+                          borderRadius: "999px",
+                          fontSize: "0.75rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.08em",
+                        }}
+                      >
+                        OFFICIAL GAMING PARTNER
+                      </div>
+                      <h3
+                        className="ep-drawer-rb-title"
+                        style={{ fontSize: "1.35rem", margin: "0" }}
+                      >
+                        {shown.partner ? `${shown.partner} × Udgam 2K26` : shown.name}
+                      </h3>
+                      <p
+                        className="ep-drawer-rb-sub"
+                        style={{
+                          fontSize: "0.95rem",
+                          lineHeight: "1.6",
+                          color: "var(--muted-foreground, #a1a1aa)",
+                          margin: "0",
+                        }}
+                      >
+                        {shown.description ||
+                          `Official championship for ${shown.name} at Udgam 2026.`}
+                      </p>
+                      {shown.prizePool && (
+                        <div
+                          style={{
+                            marginTop: "8px",
+                            padding: "12px 16px",
+                            background: "rgba(245, 158, 11, 0.12)",
+                            border: "1px solid rgba(245, 158, 11, 0.3)",
+                            borderRadius: "10px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#fbbf24" }}>
+                            🏆 Winning Prize Pool
+                          </span>
+                          <span style={{ fontSize: "1.15rem", fontWeight: 800, color: "#f59e0b" }}>
+                            {shown.prizePool}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </section>
                 ) : (
