@@ -1329,9 +1329,16 @@ function GalleryPage() {
     canvas.addEventListener("wheel", onWheel, { passive: true });
     canvas.addEventListener("click", onCanvasClick);
 
-    // Touch pinch zoom
+    // Touch: one finger swipes to look around (like a mouse drag), two fingers pinch to zoom
     let lastTouchDist = 0;
+    let lastTX = 0;
+    let lastTY = 0;
     const onTouchStart = (e: TouchEvent) => {
+      const t = e.targetTouches[0];
+      if (e.targetTouches.length === 1 && t) {
+        lastTX = t.clientX;
+        lastTY = t.clientY;
+      }
       if (e.targetTouches.length === 2) {
         const t0 = e.targetTouches[0],
           t1 = e.targetTouches[1];
@@ -1339,6 +1346,16 @@ function GalleryPage() {
       }
     };
     const onTouchMove = (e: TouchEvent) => {
+      const t = e.targetTouches[0];
+      if (e.targetTouches.length === 1 && t) {
+        camState.targetYaw -= (t.clientX - lastTX) * 0.008;
+        camState.targetPitch = Math.max(
+          camState.minPitch,
+          Math.min(camState.maxPitch, camState.targetPitch + (t.clientY - lastTY) * 0.006),
+        );
+        lastTX = t.clientX;
+        lastTY = t.clientY;
+      }
       if (e.targetTouches.length === 2) {
         const t0 = e.targetTouches[0],
           t1 = e.targetTouches[1];
@@ -1352,6 +1369,15 @@ function GalleryPage() {
     };
     canvas.addEventListener("touchstart", onTouchStart, { passive: true });
     canvas.addEventListener("touchmove", onTouchMove, { passive: true });
+    // lifting one finger of a pinch: continue the swipe from the finger still down
+    const onTouchEnd = (e: TouchEvent) => {
+      const t = e.targetTouches[0];
+      if (t) {
+        lastTX = t.clientX;
+        lastTY = t.clientY;
+      }
+    };
+    canvas.addEventListener("touchend", onTouchEnd, { passive: true });
 
     // Keyboard keys
     const keys: { [key: string]: boolean } = {};
@@ -1655,6 +1681,7 @@ function GalleryPage() {
       canvas.removeEventListener("click", onCanvasClick);
       canvas.removeEventListener("touchstart", onTouchStart);
       canvas.removeEventListener("touchmove", onTouchMove);
+      canvas.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
       scene.traverse((obj) => {

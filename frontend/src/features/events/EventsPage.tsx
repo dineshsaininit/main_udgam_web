@@ -82,6 +82,14 @@ export default function EventsPage({
   const [registering, setRegistering] = useState<FestEvent | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
+  // /events?register=<event id> (the QR codes on posters) opens that event's form straight away
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("register");
+    const target = id ? events.find((e) => e.id === id) : undefined;
+    if (target) setRegistering(target);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only on first load
+  }, []);
+
   // "/" focuses search (desktop convenience)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
