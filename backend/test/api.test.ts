@@ -205,7 +205,7 @@ describe("razorpay webhook", () => {
   it("confirms a paid registration from a correctly signed event (raw body preserved)", async () => {
     const members = ["B", "C"].map((x, i) => ({ name: `Member ${x}`, rollNo: `B23FW0${i}` }));
     const start = await (
-      await post("/api/registrations", { eventId: "free-fire", teamName: "Splash", leader: leader("B23FW09"), members: [...members, { name: "Member D", rollNo: "B23FW05" }] })
+      await post("/api/registrations", { eventId: "wall-painting", teamName: "Splash", leader: leader("B23FW09"), members: [...members, { name: "Member D", rollNo: "B23FW05" }] })
     ).json();
     expect(start).toMatchObject({ status: "payment_required" });
     capturedAmount = start.order.amount;

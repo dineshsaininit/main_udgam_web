@@ -32,6 +32,8 @@ export interface FestEvent {
   docUrl?: string;
   /** path to local PDF rulebook served from /public/rulebooks/ */
   rulebookPdf?: string;
+  /** external URL to redirect when user clicks register */
+  registerUrl?: string;
 }
 
 export const EVENT_CATEGORIES: EventCategory[] = [
@@ -244,11 +246,12 @@ export const EVENTS: FestEvent[] = [
     name: "Free Fire",
     tier: "regular",
     category: "esports",
-    fee: 200,
-    feeUnit: "team",
+    fee: 0,
     teamSize: { min: 4, max: 4 },
     taglines: ["Drop, loot, survive — Booyah or bust!", "One zone, one winner — are you ready?"],
     rulebookPdf: "/rulebooks/free-fire.pdf",
+    registerUrl:
+      "https://mstats.dare2compete.com/CL0/https:%2F%2Funstop.com%2Fp%2Ffree-fire-event-httpsudgamnitsliveevents-national-institute-of-technology-nit-sikkim-1773452%3Futm_campaign=site-emails%26utm_medium=d2c-automated%26utm_source=congratulations-your-listing-for-free-fire-event-is-complete/1/010901a164a28262-a5080507-b6e5-4b56-b5bf-f1cd5607c49d-000000/Dt453-bpcIsZqW10dfNzX2pvNyt501Pct-2k3RXa3wE=258",
   },
   {
     id: "bgmi",
@@ -303,13 +306,14 @@ export const EVENTS: FestEvent[] = [
     name: "eFootball",
     tier: "regular",
     category: "esports",
-    fee: 50,
-    feeUnit: "person",
+    fee: 0,
     teamSize: { min: 1, max: 1 },
     taglines: [
       "One ball, one dream — kick your way to glory!",
       "If you can dream the goal, come score it.",
     ],
+    registerUrl:
+      "https://mstats.dare2compete.com/CL0/https:%2F%2Funstop.com%2Fp%2Fe-football-udgam-2k26-national-institute-of-technology-nit-sikkim-1773701%3Futm_campaign=site-emails%26utm_medium=d2c-automated%26utm_source=congratulations-your-listing-for-e-football-is-complete/1/010901a164c14f0a-909a0fc8-4312-468d-84f7-71a1906999e9-000000/d9N0JnPj4LnoEUpzd2q8hiKWqYad59KO1_EkIiL16N4=258",
   },
   {
     id: "guess-the-juice",
@@ -317,13 +321,21 @@ export const EVENTS: FestEvent[] = [
     tier: "regular",
     category: "food",
     fee: 50,
-    feeUnit: "team",
+    feeUnit: "person",
     teamSize: { min: 1, max: 1 },
     taglines: [
       "Bet you can't guess this in one sip.",
       "Taste buds vs. blindfold — who wins?",
       "Taste it. Trust it. Guess it.",
     ],
+    description:
+      "Individual knockout competition where blindfolded participants identify mystery fruits, juices, and flavours using only taste and smell across three elimination rounds.",
+    rounds: [
+      "Round 1: The Blind Sip — Identify 5 mystery drinks under 10 minutes",
+      "Round 2: The Knockout Stage — Head-to-head bracket matchups on identical mystery sets",
+      "Round 3: The Ultimate Palate Challenge — Championship showdown with exotic and blended combinations",
+    ],
+    rulebookPdf: "/rulebooks/guess-the-juice.pdf",
   },
   {
     id: "three-leg-tie",

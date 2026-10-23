@@ -360,6 +360,7 @@ export default function EventDrawer({
                 onRegister={onRegister}
                 eventName={shown.name}
                 size="lg"
+                href={shown.registerUrl}
               />
             </div>
           </div>

@@ -52,6 +52,20 @@ describe("Register button", () => {
     render(<RegisterButton registered onRegister={() => {}} eventName="Rangoli" />);
     expect(screen.getByRole("button", { name: /receipt/i })).toHaveTextContent("Registered");
   });
+
+  it("renders an external link when href is provided", () => {
+    const onRegister = vi.fn();
+    render(
+      <RegisterButton
+        registered={false}
+        onRegister={onRegister}
+        eventName="Free Fire"
+        href="https://unstop.com/p/free-fire-event"
+      />,
+    );
+    const link = screen.getByRole("link", { name: "Register for Free Fire" });
+    expect(link).toHaveAttribute("href", "https://unstop.com/p/free-fire-event");
+  });
 });
 
 describe("registration form", () => {

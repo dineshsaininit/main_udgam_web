@@ -82,11 +82,19 @@ export default function EventsPage({
   const [registering, setRegistering] = useState<FestEvent | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
+  const handleRegister = (target: FestEvent) => {
+    if (target.registerUrl) {
+      window.location.href = target.registerUrl;
+      return;
+    }
+    setRegistering(target);
+  };
+
   // /events?register=<event id> (the QR codes on posters) opens that event's form straight away
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("register");
     const target = id ? events.find((e) => e.id === id) : undefined;
-    if (target) setRegistering(target);
+    if (target) handleRegister(target);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only on first load
   }, []);
 
@@ -294,7 +302,7 @@ export default function EventsPage({
                   event={e}
                   index={i}
                   registered={!!registered[e.id]}
-                  onRegister={() => setRegistering(e)}
+                  onRegister={() => handleRegister(e)}
                   onOpen={() => setOpenId(e.id)}
                   onOpenRulebook={setRulebookEvent}
                 />
@@ -308,7 +316,7 @@ export default function EventsPage({
                   event={e}
                   index={i}
                   registered={!!registered[e.id]}
-                  onRegister={() => setRegistering(e)}
+                  onRegister={() => handleRegister(e)}
                   onOpen={() => setOpenId(e.id)}
                   onOpenRulebook={setRulebookEvent}
                 />
@@ -331,7 +339,7 @@ export default function EventsPage({
                 key={e.id}
                 event={e}
                 registered={!!registered[e.id]}
-                onRegister={() => setRegistering(e)}
+                onRegister={() => handleRegister(e)}
                 onOpen={() => setOpenId(e.id)}
                 onOpenRulebook={setRulebookEvent}
               />
@@ -364,7 +372,7 @@ export default function EventsPage({
         event={openEvent}
         registered={openEvent ? !!registered[openEvent.id] : false}
         onRegister={() => {
-          if (openEvent) setRegistering(openEvent);
+          if (openEvent) handleRegister(openEvent);
         }}
         onClose={() => {
           // the registration form sits on top of the drawer: Escape closes the form first, and
@@ -436,7 +444,12 @@ function HeadlinerTile({
       )}
 
       <div className="ep-tile-actions">
-        <RegisterButton registered={registered} onRegister={onRegister} eventName={event.name} />
+        <RegisterButton
+          registered={registered}
+          onRegister={onRegister}
+          eventName={event.name}
+          href={event.registerUrl}
+        />
         <button
           type="button"
           className="ep-details-btn ep-rulebook-direct-btn"
@@ -498,6 +511,7 @@ function TicketCard({ event, registered, onRegister, onOpen, onOpenRulebook }: C
             onRegister={onRegister}
             eventName={event.name}
             size="sm"
+            href={event.registerUrl}
           />
           <button
             type="button"

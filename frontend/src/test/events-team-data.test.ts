@@ -23,10 +23,10 @@ describe("events data", () => {
     expect(byId("food-fiesta")?.fee).toBe(0); // no fee in the budget sheet -> free (organisers' call)
   });
 
-  it("links a rulebook PDF that really exists (and is compressed) for 22 events", () => {
+  it("links a rulebook PDF that really exists (and is compressed) for 23 events", () => {
     const withBook = EVENTS.filter((e) => e.rulebookPdf);
-    expect(withBook).toHaveLength(22);
-    expect(EVENTS.find((e) => e.id === "guess-the-juice")).not.toHaveProperty("rulebookPdf");
+    expect(withBook).toHaveLength(23);
+    expect(EVENTS.find((e) => e.id === "guess-the-juice")).toHaveProperty("rulebookPdf", "/rulebooks/guess-the-juice.pdf");
     for (const e of withBook) {
       const file = resolve(__dirname, "../../public", `.${e.rulebookPdf}`);
       expect(existsSync(file), e.rulebookPdf).toBe(true);
@@ -50,14 +50,13 @@ describe("events data", () => {
       "MLBB",
       "eFootball",
     ]);
-    for (const e of esports.filter(
-      (x) => x.id !== "efootball" && x.id !== "real-cricket" && x.id !== "bgmi",
-    )) {
-      expect(e).toMatchObject({ fee: 200, feeUnit: "team" });
-    }
-    expect(EVENTS.find((e) => e.id === "efootball")).toMatchObject({ fee: 50, feeUnit: "person" });
+    expect(EVENTS.find((e) => e.id === "mlbb")).toMatchObject({ fee: 200, feeUnit: "team" });
+    expect(EVENTS.find((e) => e.id === "free-fire")?.fee).toBe(0);
+    expect(EVENTS.find((e) => e.id === "efootball")?.fee).toBe(0);
     expect(EVENTS.find((e) => e.id === "bgmi")?.fee).toBe(0);
     expect(EVENTS.find((e) => e.id === "real-cricket")?.fee).toBe(0);
+    expect(EVENTS.find((e) => e.id === "free-fire")?.registerUrl).toMatch(/dare2compete|unstop/);
+    expect(EVENTS.find((e) => e.id === "efootball")?.registerUrl).toMatch(/dare2compete|unstop/);
   });
 });
 

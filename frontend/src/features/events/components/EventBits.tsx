@@ -56,12 +56,31 @@ export function RegisterButton({
   onRegister,
   eventName,
   size = "md",
+  href,
 }: {
   registered: boolean;
   onRegister: () => void;
   eventName: string;
   size?: "sm" | "md" | "lg";
+  href?: string;
 }) {
+  if (href && !registered) {
+    return (
+      <a
+        href={href}
+        className={`ep-register is-${size}`}
+        aria-label={`Register for ${eventName}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          onRegister();
+        }}
+      >
+        <ArrowIcon className="ep-register-icon" />
+        <span>Register</span>
+      </a>
+    );
+  }
+
   return (
     <button
       type="button"
