@@ -653,33 +653,33 @@
 .udgam-sponsors .sp-logo-nbcc {
   object-fit: contain;
   filter: drop-shadow(0 2px 8px rgba(0, 75, 135, 0.12));
-  width: 80%;
+  width: 86%;
   height: auto;
-  max-height: 72px;
+  max-height: 68px;
 }
 
 .udgam-sponsors .sp-logo-cisb {
   object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(139, 30, 45, 0.12));
-  width: 76%;
+  filter: drop-shadow(0 2px 8px rgba(244, 170, 25, 0.15));
+  width: 82%;
   height: auto;
-  max-height: 74px;
+  max-height: 70px;
 }
 
 .udgam-sponsors .sp-logo-sistema {
   object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(227, 6, 19, 0.12));
+  filter: drop-shadow(0 2px 8px rgba(8, 77, 86, 0.15));
   width: 82%;
   height: auto;
-  max-height: 66px;
+  max-height: 72px;
 }
 
 .udgam-sponsors .sp-logo-the-kollektor {
   object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.15));
-  width: 76%;
+  filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.2));
+  width: 86%;
   height: auto;
-  max-height: 74px;
+  max-height: 62px;
 }
 
 .udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-showcase-logo {
@@ -711,11 +711,11 @@
 }
 
 .udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-cisb {
-  filter: drop-shadow(0 4px 14px rgba(139, 30, 45, 0.3));
+  filter: drop-shadow(0 4px 14px rgba(244, 170, 25, 0.35));
 }
 
 .udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-sistema {
-  filter: drop-shadow(0 4px 14px rgba(227, 6, 19, 0.3));
+  filter: drop-shadow(0 4px 14px rgba(8, 77, 86, 0.35));
 }
 
 .udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-the-kollektor {
