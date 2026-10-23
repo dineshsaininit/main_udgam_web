@@ -248,7 +248,10 @@ export const EVENTS: FestEvent[] = [
     category: "esports",
     fee: 0,
     teamSize: { min: 4, max: 4 },
+    partner: "Unstop",
     taglines: ["Drop, loot, survive — Booyah or bust!", "One zone, one winner — are you ready?"],
+    description:
+      "Battle royale mobile championship powered by official esports partner Unstop. Squad of 4 competing in classic survival format. Free registration hosted directly on Unstop.",
     rulebookPdf: "/rulebooks/free-fire.pdf",
     registerUrl:
       "https://mstats.dare2compete.com/CL0/https:%2F%2Funstop.com%2Fp%2Ffree-fire-event-httpsudgamnitsliveevents-national-institute-of-technology-nit-sikkim-1773452%3Futm_campaign=site-emails%26utm_medium=d2c-automated%26utm_source=congratulations-your-listing-for-free-fire-event-is-complete/1/010901a164a28262-a5080507-b6e5-4b56-b5bf-f1cd5607c49d-000000/Dt453-bpcIsZqW10dfNzX2pvNyt501Pct-2k3RXa3wE=258",
@@ -308,10 +311,13 @@ export const EVENTS: FestEvent[] = [
     category: "esports",
     fee: 0,
     teamSize: { min: 1, max: 1 },
+    partner: "Unstop",
     taglines: [
       "One ball, one dream — kick your way to glory!",
       "If you can dream the goal, come score it.",
     ],
+    description:
+      "eFootball championship tournament powered by official esports partner Unstop. Go head-to-head in authentic digital football clashes. Free registration hosted directly on Unstop.",
     registerUrl:
       "https://mstats.dare2compete.com/CL0/https:%2F%2Funstop.com%2Fp%2Fe-football-udgam-2k26-national-institute-of-technology-nit-sikkim-1773701%3Futm_campaign=site-emails%26utm_medium=d2c-automated%26utm_source=congratulations-your-listing-for-e-football-is-complete/1/010901a164c14f0a-909a0fc8-4312-468d-84f7-71a1906999e9-000000/d9N0JnPj4LnoEUpzd2q8hiKWqYad59KO1_EkIiL16N4=258",
   },

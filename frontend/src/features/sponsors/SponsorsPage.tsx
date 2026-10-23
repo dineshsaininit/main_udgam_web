@@ -62,6 +62,13 @@ const SPONSOR_LOGOS: Record<string, string> = {
   dominos: "/assets/sponsors/dominos_logo.png",
   "quarks-tech": "/assets/sponsors/quarks_logo.png",
   krafton: "/assets/sponsors/krafton_logo.png",
+  unstop: "/assets/sponsors/unstop_logo.svg",
+  "union-bank": "/assets/sponsors/union_bank_logo.svg",
+  "canara-bank": "/assets/sponsors/canara_bank_logo.svg",
+  nbcc: "/assets/sponsors/nbcc_logo.png",
+  cisb: "/assets/sponsors/cisb_logo.png",
+  sistema: "/assets/sponsors/sistema_logo.png",
+  "the-kollektor": "/assets/sponsors/kollektor_logo.png",
 };
 
 /** Per-brand visual theme overrides for the card frame and glow. */
@@ -83,12 +90,61 @@ const BRAND_THEMES: Record<
     frameBorder: "rgba(243, 132, 43, 0.3)",
     tag: "OFFICIAL GAMING PARTNER · UDGAM '26",
   },
+  unstop: {
+    glow: "rgba(28, 73, 128, 0.45)",
+    accent: "#1c4980",
+    frameBg: "linear-gradient(140deg, #ffffff 0%, #f0f4f9 100%)",
+    frameBorder: "rgba(28, 73, 128, 0.3)",
+    tag: "FREE FIRE & EFOOTBALL PARTNER · UDGAM '26",
+  },
   dominos: {
     glow: "rgba(227, 24, 55, 0.45)",
     accent: "#e31837",
     frameBg: "linear-gradient(140deg, #ffffff 0%, #f4f7fb 100%)",
     frameBorder: "rgba(0, 100, 145, 0.2)",
     tag: "OFFICIAL FOOD PARTNER · UDGAM '26",
+  },
+  "union-bank": {
+    glow: "rgba(200, 16, 46, 0.4)",
+    accent: "#c8102e",
+    frameBg: "linear-gradient(140deg, #ffffff 0%, #fdf2f4 100%)",
+    frameBorder: "rgba(200, 16, 46, 0.25)",
+    tag: "OFFICIAL CASH SPONSOR · UDGAM '26",
+  },
+  "canara-bank": {
+    glow: "rgba(0, 102, 178, 0.4)",
+    accent: "#0066b2",
+    frameBg: "linear-gradient(140deg, #ffffff 0%, #f0f7ff 100%)",
+    frameBorder: "rgba(0, 102, 178, 0.25)",
+    tag: "OFFICIAL CASH SPONSOR · UDGAM '26",
+  },
+  nbcc: {
+    glow: "rgba(0, 75, 135, 0.4)",
+    accent: "#004b87",
+    frameBg: "linear-gradient(140deg, #ffffff 0%, #f4f7fb 100%)",
+    frameBorder: "rgba(0, 75, 135, 0.25)",
+    tag: "OFFICIAL CASH SPONSOR · UDGAM '26",
+  },
+  cisb: {
+    glow: "rgba(139, 30, 45, 0.4)",
+    accent: "#8b1e2d",
+    frameBg: "linear-gradient(140deg, #ffffff 0%, #faf3f4 100%)",
+    frameBorder: "rgba(139, 30, 45, 0.25)",
+    tag: "OFFICIAL CASH SPONSOR · UDGAM '26",
+  },
+  sistema: {
+    glow: "rgba(227, 6, 19, 0.4)",
+    accent: "#e30613",
+    frameBg: "linear-gradient(140deg, #ffffff 0%, #fff5f5 100%)",
+    frameBorder: "rgba(227, 6, 19, 0.25)",
+    tag: "OFFICIAL CASH SPONSOR · UDGAM '26",
+  },
+  "the-kollektor": {
+    glow: "rgba(212, 175, 55, 0.45)",
+    accent: "#d4af37",
+    frameBg: "linear-gradient(140deg, #ffffff 0%, #fbf9f2 100%)",
+    frameBorder: "rgba(212, 175, 55, 0.3)",
+    tag: "OFFICIAL CASH SPONSOR · UDGAM '26",
   },
 };
 
@@ -461,6 +517,7 @@ export default function SponsorsPage({ data }: { data: SponsorsData }) {
 
   const quarks = data.sponsors.find((s) => s.id === "quarks-tech");
   const krafton = data.sponsors.find((s) => s.id === "krafton");
+  const unstop = data.sponsors.find((s) => s.id === "unstop");
   const dominos = data.sponsors.find((s) => s.id === "dominos");
 
   const displayedCategories =
@@ -500,7 +557,7 @@ export default function SponsorsPage({ data }: { data: SponsorsData }) {
         </nav>
 
         {/* Featured partners (shown only in "All" view) */}
-        {activeCategory === "all" && (quarks || krafton || dominos) && (
+        {activeCategory === "all" && (quarks || krafton || unstop || dominos) && (
           <section className="sponsors-featured-section" aria-label="Featured Partners">
             <div className="sponsors-section-header">
               <h2 className="sponsors-section-heading">Featured Partners</h2>
@@ -526,6 +583,16 @@ export default function SponsorsPage({ data }: { data: SponsorsData }) {
                     tierLabel={data.tierConfig[krafton.tier]?.label ?? "Gaming Partner"}
                     tierColor={data.tierConfig[krafton.tier]?.color ?? "#ff5722"}
                     categoryLabel="Gaming"
+                  />
+                </div>
+              )}
+              {unstop && (
+                <div className="sponsors-card-slot">
+                  <SponsorPassCard
+                    sponsor={unstop}
+                    tierLabel={data.tierConfig[unstop.tier]?.label ?? "Gaming Partner"}
+                    tierColor={data.tierConfig[unstop.tier]?.color ?? "#1c4980"}
+                    categoryLabel="Gaming & Esports"
                   />
                 </div>
               )}
