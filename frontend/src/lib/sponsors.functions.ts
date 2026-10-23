@@ -52,7 +52,7 @@ export const sponsors = [
     name: "Krafton",
     categoryId: "gaming",
     tier: "gaming",
-    logo: "/assets/sponsors/krafton_logo.svg",
+    logo: "/assets/sponsors/krafton_logo.png",
     website: "https://krafton.in",
     description:
       "Official gaming partner for BGMI (₹12,000 prize pool) and Real Cricket (₹3,000 prize pool) tournaments at Udgam 2K26.",

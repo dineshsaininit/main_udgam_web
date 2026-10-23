@@ -61,7 +61,7 @@ const PETALS = Array.from({ length: 14 }, (_, i) =>
 const SPONSOR_LOGOS: Record<string, string> = {
   dominos: "/assets/sponsors/dominos_logo.png",
   "quarks-tech": "/assets/sponsors/quarks_logo.png",
-  krafton: "/assets/sponsors/krafton_logo.svg",
+  krafton: "/assets/sponsors/krafton_logo.png",
 };
 
 /** Per-brand visual theme overrides for the card frame and glow. */
@@ -77,10 +77,10 @@ const BRAND_THEMES: Record<
     tag: "TITLE TECH PARTNER · UDGAM '26",
   },
   krafton: {
-    glow: "rgba(255, 87, 34, 0.55)",
-    accent: "#ff5722",
-    frameBg: "linear-gradient(140deg, #111419 0%, #1e222b 50%, #13151b 100%)",
-    frameBorder: "rgba(255, 87, 34, 0.4)",
+    glow: "rgba(243, 132, 43, 0.45)",
+    accent: "#f3842b",
+    frameBg: "linear-gradient(140deg, #ffffff 0%, #f7f9fa 100%)",
+    frameBorder: "rgba(243, 132, 43, 0.3)",
     tag: "OFFICIAL GAMING PARTNER · UDGAM '26",
   },
   dominos: {

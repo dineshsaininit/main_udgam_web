@@ -611,10 +611,10 @@
 
 .udgam-sponsors .sp-logo-krafton {
   object-fit: contain;
-  filter: drop-shadow(0 4px 14px rgba(255, 87, 34, 0.45));
-  width: 82%;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+  width: 85%;
   height: auto;
-  max-height: 64px;
+  max-height: 70px;
 }
 
 .udgam-sponsors .sp-logo-dominos {
@@ -635,7 +635,7 @@
 }
 
 .udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-krafton {
-  filter: drop-shadow(0 6px 20px rgba(255, 87, 34, 0.75));
+  filter: drop-shadow(0 4px 14px rgba(243, 132, 43, 0.35));
 }
 
 .udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-dominos {
