@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { BlossomLoader, LoaderScreen } from "@/components/ui/BlossomLoader";
+import { SponsorsFinale } from "@/features/home/SponsorsFinale";
 
 // start downloading the 3D scene as soon as this route's code runs, not when Home first renders
 const sceneImport = import("@/components/3d/BlossomScene");
@@ -141,6 +142,9 @@ function Home() {
         {/* scroll room for the 3D journey */}
         <div className="h-[300vh]" />
         </div>
+
+        {/* after the 3D journey: thank the sponsors */}
+        <SponsorsFinale />
 
       </main>
     </>
