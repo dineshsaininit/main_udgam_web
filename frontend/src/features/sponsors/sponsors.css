@@ -1,926 +1,984 @@
-/* ============================================================
-   Sponsors page – Udgam 2K26
-   ============================================================ */
+/* =====================================================================
+   Sponsors page (/sponsors) — Udgam 2K26
+   Every rule is scoped under .udgam-sponsors so nothing leaks into the
+   site navbar or other pages. Animation names are prefixed "sp-".
+   ===================================================================== */
+
+/* Hover lift for ring tiles (registered so the change animates) */
+@property --sp-lift {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --sp-zoom {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
 
 .udgam-sponsors {
-  --font-display: "Fraunces", Georgia, serif;
-  --font-serif: var(--font-display);
-  --font-sans: "Quicksand", system-ui, sans-serif;
-  font-family: var(--font-sans);
-}
+  --sp-bg: #fdf2f6;
+  --sp-fg: #4b2340;
+  --sp-fg-soft: #6b4a5f;
+  --sp-muted: #7d6273;
+  --sp-primary: #d9508a;
+  --sp-primary-fg: #fff7fa;
+  --sp-blossom: #f6bad3;
+  --sp-blossom-deep: #c93a7c;
+  --sp-ink-blue: #2f5f9e;
+  --sp-ink-teal: #1f6b8e;
 
-.udgam-sponsors.sponsors-page-root {
-  z-index: 2;
-  --lake-ink: oklch(30% 0.07 248);
-  --lake: oklch(50% 0.12 240);
-  --sky: oklch(74% 0.11 232);
-  --sakura: oklch(66% 0.15 355);
-  --spring: oklch(72% 0.14 135);
-  --foreground: var(--lake-ink);
-  --muted-foreground: oklch(48% 0.06 240);
-  --border: oklch(86% 0.04 230 / 0.7);
-  --ring: var(--sky);
-  --blossom: oklch(86% 0.08 355);
-  --blossom-deep: var(--sakura);
-  --gradient-blossom: linear-gradient(
-    120deg,
-    var(--lake) 10%,
-    oklch(60% 0.13 300) 55%,
-    var(--sakura) 90%
-  );
-  --background: oklch(97% 0.02 230);
-  min-height: 100vh;
-  color: var(--foreground);
-  background: 0 0;
-  padding: 130px 24px 90px;
+  --sp-sky-1: #dbe7fb;
+  --sp-sky-2: #ecdcf4;
+  --sp-sky-3: #fde4ec;
+
+  --sp-glass: rgba(255, 255, 255, 0.5);
+  --sp-glass-strong: rgba(255, 255, 255, 0.8);
+  --sp-glass-border: rgba(255, 255, 255, 0.65);
+  --sp-card: rgba(255, 253, 254, 0.94);
+  --sp-card-border: rgba(214, 170, 196, 0.55);
+
+  --sp-gradient-title: linear-gradient(100deg, #2f5f9e 0%, #6b5aa9 45%, #c85a8f 75%, #e98ba8 100%);
+  --sp-gradient-btn: linear-gradient(100deg, #2f62a7, #7a56a3 50%, #cf4f8d);
+
+  --sp-shadow-glow: 0 10px 40px -10px rgba(201, 58, 124, 0.45);
+  --sp-shadow-card: 0 24px 60px -28px rgba(90, 40, 80, 0.4);
+  --sp-shadow-soft: 0 10px 30px -14px rgba(90, 40, 80, 0.3);
+
+  --sp-font-body: "Quicksand", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sp-font-display: "Fraunces", Georgia, "Times New Roman", serif;
+
+  --sp-radius: 1.25rem;
+  --sp-radius-lg: 1.75rem;
+  --sp-gutter: 16px;
+  --sp-max: 72rem;
+
   position: relative;
+  min-height: 100dvh;
+  font-family: var(--sp-font-body);
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--sp-fg);
   overflow-x: clip;
+  -webkit-tap-highlight-color: transparent;
 }
 
-@media (width <= 768px) {
-  .udgam-sponsors.sponsors-page-root {
-    padding: 108px 16px 60px;
-  }
+/* Jump links land below the fixed navbar */
+.udgam-sponsors section[id] {
+  scroll-margin-top: 6rem;
 }
 
-/* ── Backdrop ────────────────────────────────────────────────── */
+.udgam-sponsors img {
+  max-width: 100%;
+  display: block;
+}
+.udgam-sponsors a {
+  color: inherit;
+  text-decoration: none;
+}
+.udgam-sponsors button,
+.udgam-sponsors input,
+.udgam-sponsors select,
+.udgam-sponsors textarea {
+  font: inherit;
+  color: inherit;
+}
+.udgam-sponsors ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.udgam-sponsors h1,
+.udgam-sponsors h2,
+.udgam-sponsors h3 {
+  margin: 0;
+  line-height: 1.1;
+}
+.udgam-sponsors :focus-visible {
+  outline: 3px solid rgba(217, 80, 138, 0.55);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
 
-.udgam-sponsors .sponsors-backdrop {
-  z-index: -1;
-  pointer-events: none;
-  background: oklch(86% 0.06 235);
+/* ---------- Backdrop ---------- */
+.udgam-sponsors .bg {
   position: fixed;
   inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    var(--sp-sky-1) 0%,
+    var(--sp-sky-2) 60%,
+    var(--sp-sky-3) 100%
+  );
+}
+.udgam-sponsors .bg__image {
+  position: absolute;
+  inset: 0;
+  background-image: url("/assets/team/backgrounds/team-panorama-1280.webp");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  transform: scale(1.03);
+  animation: sp-bg-drift 60s ease-in-out infinite alternate;
+}
+.udgam-sponsors .bg__veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.25) 45%,
+    rgba(253, 228, 236, 0.7) 100%
+  );
+}
+.udgam-sponsors .bg__glow {
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+.udgam-sponsors .bg__glow--rose {
+  background: radial-gradient(circle, rgba(249, 168, 201, 0.9), transparent 60%);
+  top: -20vmax;
+  right: -20vmax;
+  animation: sp-glow-float 18s ease-in-out infinite alternate;
+}
+.udgam-sponsors .bg__glow--sky {
+  background: radial-gradient(circle, rgba(170, 200, 255, 0.8), transparent 60%);
+  bottom: -25vmax;
+  left: -20vmax;
+  animation: sp-glow-float 22s ease-in-out infinite alternate-reverse;
+}
+@keyframes sp-bg-drift {
+  to {
+    transform: scale(1.08) translateY(-1.5%);
+  }
+}
+@keyframes sp-glow-float {
+  to {
+    transform: translate(6vmax, 4vmax);
+  }
+}
+
+/* Petals */
+.udgam-sponsors .petals {
+  position: absolute;
+  inset: 0;
   overflow: hidden;
 }
-
-.udgam-sponsors .sb-world {
-  transform: translate3d(calc(var(--mx, 0) * -12px), calc(var(--my, 0) * -8px), 0);
+.udgam-sponsors .petal {
   position: absolute;
-  inset: -4vh -3vw;
+  top: -8vh;
+  left: var(--x, 50%);
+  width: var(--size, 14px);
+  height: calc(var(--size, 14px) * 0.78);
+  opacity: 0;
+  animation: sp-petal-fall var(--dur, 12s) linear var(--delay, 0s) infinite;
 }
-
-.udgam-sponsors .sb-panorama {
-  -webkit-user-select: none;
-  user-select: none;
-  width: max(100%, 95vh);
-  max-width: none;
-  height: auto;
+.udgam-sponsors .petal__inner {
   display: block;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translate(-50%);
-}
-
-.udgam-sponsors .sb-veil {
-  background:
-    radial-gradient(70% 55% at 50% 45%, oklch(99% 0.01 230 / 0.28), #0000 75%),
-    linear-gradient(
-      oklch(97% 0.02 230 / 0.45) 0%,
-      oklch(97% 0.02 230 / 0.18) 45%,
-      oklch(97% 0.025 200 / 0.32) 100%
-    );
-  position: absolute;
-  inset: 0;
-}
-
-.udgam-sponsors .sb-petals {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-}
-
-.udgam-sponsors .sb-petal {
-  top: -6vh;
-  left: var(--x);
-  width: var(--size);
-  aspect-ratio: 1 / 1.35;
-  opacity: 0.75;
-  filter: blur(var(--blur));
-  animation:
-    sb-fall var(--fall) linear infinite,
-    sb-sway var(--sway) ease-in-out infinite alternate;
-  animation-delay: var(--delay), calc(var(--delay) / 3);
-  background: linear-gradient(135deg, oklch(95% 0.04 355), oklch(82% 0.1 355));
-  border-radius: 80% 0;
-  position: absolute;
-}
-
-@keyframes sb-fall {
-  to {
-    translate: 0 112vh;
-  }
-}
-
-@keyframes sb-sway {
-  0% {
-    transform: translate(-26px) rotate(-30deg);
-  }
-  to {
-    transform: translate(26px) rotate(40deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .udgam-sponsors .sb-petals {
-    display: none;
-  }
-  .udgam-sponsors .sb-world {
-    transform: none;
-  }
-}
-
-/* ── Layout ──────────────────────────────────────────────────── */
-
-.udgam-sponsors .sponsors-hierarchical-layout {
-  z-index: 1;
-  flex-direction: column;
-  align-items: center;
-  gap: 52px;
   width: 100%;
-  max-width: 1180px;
-  margin: 0 auto;
-  display: flex;
-  position: relative;
+  height: 100%;
+  border-radius: 150% 0 150% 0;
+  background: linear-gradient(135deg, rgba(255, 196, 220, 0.95), rgba(243, 138, 180, 0.8));
+  box-shadow: 0 0 6px rgba(255, 170, 200, 0.5);
+  animation: sp-petal-sway var(--sway, 3.2s) ease-in-out infinite alternate;
+}
+@keyframes sp-petal-fall {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(115vh);
+    opacity: 0;
+  }
+}
+@keyframes sp-petal-sway {
+  from {
+    transform: translateX(-18px) rotate(-30deg);
+  }
+  to {
+    transform: translateX(18px) rotate(220deg);
+  }
 }
 
-/* ── Page header ─────────────────────────────────────────────── */
-
-.udgam-sponsors .sponsors-page-header {
-  text-align: center;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  max-width: 720px;
-  margin: 0 auto;
-  display: flex;
+/* ---------- Shared pieces ---------- */
+.udgam-sponsors .glass {
+  background: var(--sp-glass);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid var(--sp-glass-border);
+  box-shadow: var(--sp-shadow-glow);
 }
 
-.udgam-sponsors .sponsors-header-pill {
-  font-family: var(--font-sans);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--blossom-deep);
-  border: 1px solid var(--border);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 4px 14px -4px color-mix(in oklab, var(--blossom-deep) 20%, transparent);
-  background: oklch(100% 0 0 / 0.85);
-  border-radius: 9999px;
-  padding: 6px 18px;
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-
-.udgam-sponsors .sponsors-page-title {
-  font-family: var(--font-serif);
-  letter-spacing: -0.01em;
-  background: var(--gradient-blossom);
-  color: #0000;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 12px oklch(100% 0 0 / 0.9));
+.udgam-sponsors .title-gradient {
+  font-family: var(--sp-font-display);
+  font-weight: 800;
+  background: var(--sp-gradient-title);
   -webkit-background-clip: text;
   background-clip: text;
-  margin: 0;
-  font-size: clamp(2.4rem, 4.8vw, 3.8rem);
-  font-weight: 800;
+  color: transparent;
+  filter: drop-shadow(0 6px 18px rgba(201, 58, 124, 0.18));
 }
 
-.udgam-sponsors .sponsors-page-subtitle {
-  font-family: var(--font-sans);
-  color: var(--muted-foreground);
-  text-wrap: balance;
-  margin: 4px 0 0;
-  font-size: clamp(0.95rem, 1.8vw, 1.15rem);
-  line-height: 1.6;
+.udgam-sponsors .kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  background: var(--sp-glass-strong);
+  border: 1px solid var(--sp-glass-border);
+  box-shadow: var(--sp-shadow-soft);
+  color: var(--sp-blossom-deep);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 }
 
-/* ── Filter pills ────────────────────────────────────────────── */
-
-.udgam-sponsors .sponsors-filters-bar {
-  flex-wrap: wrap;
+.udgam-sponsors .btn {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  display: flex;
-}
-
-.udgam-sponsors .sponsor-pill {
-  border: 1.5px solid var(--border);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  font-family: var(--font-sans);
-  color: var(--foreground);
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.75rem 1.6rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  font-size: 0.95rem;
   cursor: pointer;
-  -webkit-user-select: none;
-  user-select: none;
-  background: oklch(99% 0.01 230 / 0.8);
-  border-radius: 9999px;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 18px;
-  font-size: 0.86rem;
-  font-weight: 600;
-  transition: all 0.25s;
-  display: inline-flex;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+  white-space: nowrap;
 }
-
-.udgam-sponsors .sponsor-pill:hover {
-  border-color: var(--sky);
-  background: oklch(98% 0.02 230 / 0.95);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px -4px oklch(50% 0.12 240 / 0.25);
-}
-
-.udgam-sponsors .sponsor-pill.active {
-  background: var(--gradient-blossom);
-  color: #fff;
-  border-color: #0000;
-  box-shadow: 0 6px 24px -6px oklch(50% 0.12 240 / 0.45);
-}
-
-.udgam-sponsors .sponsor-pill-icon {
-  font-size: 1.05rem;
-}
-
-/* ── Featured section ────────────────────────────────────────── */
-
-.udgam-sponsors .sponsors-featured-section {
-  flex-direction: column;
-  align-items: center;
-  gap: 28px;
-  width: 100%;
-  display: flex;
-}
-
-.udgam-sponsors .sponsors-section-header {
-  text-align: center;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  display: flex;
-}
-
-.udgam-sponsors .sponsors-section-heading {
-  font-family: var(--font-serif);
-  color: var(--lake);
-  letter-spacing: -0.01em;
-  text-shadow: 0 1px 14px oklch(100% 0 0 / 0.9);
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  margin: 0;
-  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
-  font-weight: 800;
-  display: inline-flex;
-}
-
-.udgam-sponsors .sponsors-section-heading::before,
-.udgam-sponsors .sponsors-section-heading::after {
-  content: "";
-  background: linear-gradient(90deg, transparent, var(--ring));
-  width: 38px;
-  height: 2px;
-  display: inline-block;
-}
-
-.udgam-sponsors .sponsors-section-heading::after {
-  background: linear-gradient(90deg, var(--ring), transparent);
-}
-
-.udgam-sponsors .sponsors-section-sub {
-  color: var(--muted-foreground);
-  margin: 0;
-  font-size: 0.92rem;
-}
-
-.udgam-sponsors .sponsors-pair-row {
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: stretch;
-  gap: 48px;
-  width: 100%;
-  display: flex;
-}
-
-.udgam-sponsors .sponsors-card-slot {
-  flex: 0 330px;
-  justify-content: center;
-  align-self: stretch;
-  width: 100%;
-  max-width: 330px;
-  display: flex;
-}
-
-@media (width <= 768px) {
-  .udgam-sponsors .sponsors-pair-row {
-    gap: 32px;
+@media (hover: hover) {
+  .udgam-sponsors .btn:hover {
+    transform: translateY(-2px);
   }
 }
-
-/* ── Category sections ───────────────────────────────────────── */
-
-.udgam-sponsors .sponsors-categories-container {
-  flex-direction: column;
-  align-items: center;
-  gap: 56px;
-  width: 100%;
-  display: flex;
+.udgam-sponsors .btn:active {
+  transform: translateY(0);
+}
+.udgam-sponsors .btn--primary {
+  background: var(--sp-gradient-btn);
+  color: var(--sp-primary-fg);
+  box-shadow: var(--sp-shadow-glow);
+}
+.udgam-sponsors .btn--primary:hover {
+  box-shadow: 0 16px 44px -12px rgba(201, 58, 124, 0.6);
+}
+.udgam-sponsors .btn--ghost {
+  background: var(--sp-glass-strong);
+  border-color: var(--sp-glass-border);
+  color: var(--sp-ink-blue);
+  box-shadow: var(--sp-shadow-soft);
+}
+.udgam-sponsors .btn--sm {
+  min-height: 2.4rem;
+  padding: 0.5rem 1.15rem;
+  font-size: 0.85rem;
 }
 
-.udgam-sponsors .sponsor-category-section {
-  flex-direction: column;
-  align-items: center;
-  gap: 28px;
-  width: 100%;
-  display: flex;
+.udgam-sponsors .section {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 2 * var(--sp-gutter), var(--sp-max));
+  margin: 0 auto;
+  padding: clamp(2.5rem, 6vw, 4.5rem) 0;
 }
-
-.udgam-sponsors .sponsor-category-header {
+.udgam-sponsors .section__head {
   text-align: center;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.udgam-sponsors .section-title {
   display: flex;
-}
-
-.udgam-sponsors .sponsor-category-title {
-  font-family: var(--font-serif);
-  color: var(--lake);
-  letter-spacing: 0.02em;
-  text-shadow: 0 1px 14px oklch(100% 0 0 / 0.9);
-  justify-content: center;
   align-items: center;
-  gap: 12px;
-  margin: 0;
-  font-size: clamp(1.4rem, 2.4vw, 1.85rem);
-  font-weight: 700;
-  display: inline-flex;
+  justify-content: center;
+  gap: 1rem;
+  font-family: var(--sp-font-display);
+  font-weight: 800;
+  font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+  color: var(--sp-ink-teal);
+  text-shadow: 0 4px 24px rgba(255, 255, 255, 0.8);
 }
-
-.udgam-sponsors .sponsor-category-title::before,
-.udgam-sponsors .sponsor-category-title::after {
+.udgam-sponsors .section-title::before,
+.udgam-sponsors .section-title::after {
   content: "";
-  background: linear-gradient(90deg, transparent, var(--ring));
-  width: 28px;
-  height: 1.5px;
-  display: inline-block;
+  flex: 0 0 clamp(1.5rem, 6vw, 3rem);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(31, 107, 142, 0.6));
+  border-radius: 2px;
+}
+.udgam-sponsors .section-title::after {
+  transform: scaleX(-1);
 }
 
-.udgam-sponsors .sponsor-category-title::after {
-  background: linear-gradient(90deg, var(--ring), transparent);
+.udgam-sponsors .section-sub {
+  margin: 0.75rem auto 0;
+  max-width: 44rem;
+  color: var(--sp-fg-soft);
+  font-size: 1.02rem;
 }
 
-.udgam-sponsors .sponsor-category-icon {
-  font-size: 1.4rem;
+/* ---------- Hero ---------- */
+.udgam-sponsors .hero {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 2 * var(--sp-gutter), var(--sp-max));
+  margin: 0 auto;
+  padding: clamp(7.5rem, 16vw, 10rem) 0 clamp(2rem, 5vw, 3rem);
+  text-align: center;
 }
-
-.udgam-sponsors .sponsor-category-description {
-  color: var(--muted-foreground);
-  max-width: 520px;
-  margin: 0;
-  font-size: 0.88rem;
+.udgam-sponsors .hero h1 {
+  margin: 1.1rem 0 1rem;
+  font-size: clamp(2.1rem, 11vw, 5.2rem);
+  letter-spacing: -0.02em;
 }
-
-.udgam-sponsors .sponsor-category-cards {
+.udgam-sponsors .lede {
+  margin: 0 auto;
+  max-width: 44rem;
+  font-size: clamp(1.02rem, 1.6vw, 1.2rem);
+  color: var(--sp-fg-soft);
+}
+.udgam-sponsors .hero__actions {
+  display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: stretch;
-  gap: 40px;
-  width: 100%;
-  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
 }
 
-/* ── Sponsor pass card ───────────────────────────────────────── */
+/* ---------- Sponsor showcase (contained rectangle) ---------- */
+.udgam-sponsors .showcase-section {
+  padding-top: clamp(0.5rem, 2vw, 1.5rem);
+}
 
-.udgam-sponsors .sponsor-pass-card-wrapper {
-  perspective: 850px;
-  touch-action: manipulation;
-  --pointer-x: 50%;
-  --pointer-y: 50%;
-  --pointer-from-center: 0;
-  --pointer-from-top: 0.5;
-  --pointer-from-left: 0.5;
-  --card-opacity: 0;
-  --rotate-x: 0deg;
-  --rotate-y: 0deg;
-  --behind-glow-size: 60%;
-  flex-direction: column;
-  width: 100%;
-  max-width: 330px;
-  height: 100%;
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-  display: flex;
+.udgam-sponsors .showcase {
   position: relative;
-  transform: translateZ(0.1px);
-}
-
-.udgam-sponsors .sponsor-behind-glow {
-  z-index: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
-    var(--behind-glow-color, #f5b7296b) 0%,
-    transparent var(--behind-glow-size, 60%)
-  );
-  filter: blur(30px) saturate(1.4);
-  opacity: calc(0.9 * var(--card-opacity, 0));
-  border-radius: 34px;
-  transition:
-    opacity 0.24s,
-    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
-    filter 0.24s;
-  position: absolute;
-  inset: -16px;
-  transform: scale(0.96);
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover {
-  --card-opacity: 1;
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sponsor-behind-glow {
-  opacity: 1;
-  filter: blur(36px) saturate(1.6);
-  transform: scale(1.08);
-}
-
-.udgam-sponsors .sponsor-pass-shell {
-  z-index: 1;
-  flex-direction: column;
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  position: relative;
-}
-
-.udgam-sponsors .sp-card {
-  text-align: center;
-  border: 1.5px solid var(--border);
-  width: 100%;
-  height: 100%;
-  min-height: 530px;
-  color: var(--foreground);
+  border-radius: var(--sp-radius-lg);
+  background: rgba(255, 255, 255, 0.58);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
   box-shadow:
-    color-mix(in oklab, var(--lake) 22%, transparent)
-      calc((var(--pointer-from-left, 0.5) * 12px) - 6px)
-      calc((var(--pointer-from-top, 0.5) * 16px) - 8px)
-      30px
-      -8px;
-  transform: translateZ(0) rotateX(var(--rotate-y, 0deg)) rotateY(var(--rotate-x, 0deg));
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  -webkit-user-select: none;
-  user-select: none;
-  background: oklch(99.5% 0.006 230 / 0.96);
-  border-radius: 26px;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px 22px 26px;
-  transition:
-    transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
-    border-color 0.3s,
-    box-shadow 0.3s;
-  display: flex;
-  position: relative;
+    0 30px 80px -30px rgba(90, 40, 80, 0.45),
+    var(--sp-shadow-glow);
   overflow: hidden;
 }
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-card {
-  border-color: color-mix(in oklab, var(--tier-accent, var(--sky)) 55%, white);
-  box-shadow:
-    0 26px 54px -12px color-mix(in oklab, var(--behind-glow-color) 45%, transparent),
-    0 0 0 1px color-mix(in oklab, var(--tier-accent, var(--sky)) 35%, transparent);
-  transition: none;
-}
-
-/* Glare */
-.udgam-sponsors .sp-glare {
-  pointer-events: none;
-  z-index: 3;
-  mix-blend-mode: soft-light;
-  background: radial-gradient(
-    circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
-    #ffffffd9 0%,
-    #fff3 35%,
-    transparent 65%
-  );
-  opacity: var(--card-opacity, 0);
-  transition: opacity 0.22s;
+/* gradient top edge, like a ribbon across the frame */
+.udgam-sponsors .showcase::before {
+  content: "";
   position: absolute;
-  inset: 0;
+  inset: 0 0 auto 0;
+  height: 5px;
+  background: var(--sp-gradient-btn);
 }
-
-/* Decorative art */
-.udgam-sponsors .sp-art {
-  pointer-events: none;
-  z-index: 0;
-  height: 24%;
+.udgam-sponsors .showcase__corner {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  overflow: hidden;
-}
-
-.udgam-sponsors .sp-art-wave {
-  opacity: 0.65;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  inset: 0;
-}
-
-.udgam-sponsors .sp-art-blossom {
-  opacity: 0.5;
+  z-index: 2;
   font-size: 1.1rem;
-  position: absolute;
-  bottom: 14%;
-  right: 8%;
+  color: var(--sp-blossom-deep);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.udgam-sponsors .showcase__corner--tl {
+  top: 0.9rem;
+  left: 0.9rem;
 }
 
-/* Tag */
-.udgam-sponsors .sp-tag {
-  font-family: var(--font-serif);
-  letter-spacing: 0.16em;
-  color: var(--lake);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
-  max-width: 90%;
-  height: 18px;
-  margin-bottom: 14px;
-  font-size: 0.58rem;
-  font-weight: 700;
-  line-height: 18px;
-  overflow: hidden;
-}
-
-/* Showcase frame */
-.udgam-sponsors .sp-showcase-frame {
-  aspect-ratio: 16 / 10;
-  border: 1.5px solid var(--border);
-  background: oklch(96% 0.02 230);
-  border-radius: 18px;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 165px;
-  margin-bottom: 16px;
-  transition:
-    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.35s,
-    border-color 0.3s;
+.udgam-sponsors .showcase__head {
   display: flex;
-  position: relative;
-  overflow: hidden;
-  transform: translateZ(14px);
-  box-shadow: inset 0 2px 6px #0000000d;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  padding: 1.15rem 1.4rem 0.75rem 2.6rem;
 }
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-showcase-frame {
-  border-color: color-mix(in oklab, var(--tier-accent) 50%, white);
-  transform: translateZ(28px) scale(1.02);
-  box-shadow: 0 14px 28px -6px #00000040;
+.udgam-sponsors .showcase__label {
+  min-width: 0;
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sp-blossom-deep);
 }
-
-.udgam-sponsors .sp-showcase-logo {
-  object-fit: contain;
-  -webkit-user-select: none;
-  user-select: none;
-  max-width: 85%;
-  max-height: 80%;
+.udgam-sponsors .showcase__tools {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.udgam-sponsors .showcase__btn {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--sp-card-border);
+  background: #fff;
+  color: var(--sp-ink-blue);
+  box-shadow: var(--sp-shadow-soft);
+  cursor: pointer;
   transition:
-    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
-    filter 0.3s;
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+.udgam-sponsors .showcase__btn:hover {
+  transform: translateY(-1px);
+  color: var(--sp-blossom-deep);
+}
+.udgam-sponsors .showcase__btn .icon-play {
+  display: none;
+}
+.udgam-sponsors .showcase.is-paused .showcase__btn .icon-play {
   display: block;
 }
-
-.udgam-sponsors .sp-logo-quarks-tech {
-  filter: drop-shadow(0 4px 14px #2bb6734d);
-  width: 85%;
-  height: auto;
-  max-height: 68px;
+.udgam-sponsors .showcase.is-paused .showcase__btn .icon-pause {
+  display: none;
 }
 
-.udgam-sponsors .sp-logo-krafton {
-  object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
-  width: 85%;
-  height: auto;
-  max-height: 70px;
+.udgam-sponsors .showcase__body {
+  position: relative;
+  padding: 1rem 1rem 1.25rem;
+  border-top: 1px solid rgba(214, 170, 196, 0.4);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.12));
 }
 
-.udgam-sponsors .sp-logo-dominos {
+/* ---------- Sponsor ring: tiles circulate around the frame ---------- */
+.udgam-sponsors .sp-ring {
+  /* Sizing limits; the script picks the frame shape and sets --tile-w / --tile-h */
+  --tile-min-w: 160px;
+  --tile-max-w: 320px;
+  --tile-min-h: 128px;
+  --tile-max-h: 172px;
+  --tile-ratio: 0.65;
+  --ring-gap: 16px;
+  --tile-w: 170px;
+  --tile-h: 124px;
+  position: relative;
+  width: 100%;
+  min-height: 300px;
+}
+@media (max-width: 560px) {
+  .udgam-sponsors .sp-ring {
+    --tile-min-w: 140px;
+    --ring-gap: 12px;
+  }
+  .udgam-sponsors .showcase__head {
+    padding: 1rem 1rem 0.7rem 2.4rem;
+  }
+  .udgam-sponsors .showcase__label {
+    letter-spacing: 0.14em;
+    font-size: 0.72rem;
+  }
+}
+/* Narrow tiles: two-line names instead of "…" */
+.udgam-sponsors .sp-ring--compact .rtile__name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
+  text-overflow: clip;
+  font-size: 0.8rem;
+  line-height: 1.15;
+  min-height: 2.3em;
+}
+.udgam-sponsors .sp-ring--compact .rtile__logo {
+  height: calc(var(--tile-h) - 60px);
+}
+
+/* One tile = one slot on the frame. JS positions it with translate3d. */
+.udgam-sponsors .rtile {
+  --sp-lift: 0px;
+  --sp-zoom: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--tile-w);
+  height: var(--tile-h);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 1.1rem;
+  background: var(--sp-card);
+  border: 1.5px solid var(--sp-card-border);
+  box-shadow: var(--sp-shadow-soft);
+  will-change: transform;
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    opacity 0.22s ease,
+    --sp-lift 0.25s ease,
+    --sp-zoom 0.25s ease;
+}
+.udgam-sponsors .rtile:focus-visible {
+  z-index: 3;
+  --sp-lift: -10px;
+  --sp-zoom: 1.06;
+  border-color: rgba(201, 58, 124, 0.5);
+  box-shadow: 0 22px 50px -20px rgba(201, 58, 124, 0.6);
+}
+@media (hover: hover) {
+  .udgam-sponsors .rtile:hover {
+    z-index: 3;
+    --sp-lift: -10px;
+    --sp-zoom: 1.06;
+    border-color: rgba(201, 58, 124, 0.5);
+    box-shadow: 0 22px 50px -20px rgba(201, 58, 124, 0.6);
+  }
+}
+.udgam-sponsors .rtile.is-swapping {
+  opacity: 0;
+}
+.udgam-sponsors .rtile.is-moving {
+  z-index: 2;
+}
+.udgam-sponsors .rtile__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: calc(var(--tile-h) - 48px);
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.8rem;
+  background: #fff;
+  border: 1px solid rgba(214, 170, 196, 0.35);
+  overflow: hidden;
+}
+.udgam-sponsors .rtile__logo img {
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 6px 18px #0064912e);
+}
+.udgam-sponsors .rtile--dark .rtile__logo {
+  background: linear-gradient(145deg, #0f1f1a, #16302a 60%, #0b1714);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.udgam-sponsors .rtile__name {
+  max-width: 100%;
+  font-family: var(--sp-font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.15;
+  color: var(--sp-fg);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The Udgam logo in the middle of the frame (a banner above it on phones) */
+.udgam-sponsors .sp-ring__center {
+  position: absolute;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 1.25rem;
+  border-radius: 1.1rem;
+  overflow: hidden;
+  /* Deep plum stage: the Udgam logo was designed on black, so its peach lettering needs a dark ground */
+  background:
+    radial-gradient(60% 75% at 50% 45%, rgba(201, 58, 124, 0.32), transparent 70%),
+    radial-gradient(40% 50% at 20% 80%, rgba(47, 98, 167, 0.25), transparent 70%),
+    linear-gradient(160deg, #2c1230 0%, #1d0b20 55%, #251032 100%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.35),
+    0 18px 40px -22px rgba(60, 20, 60, 0.6);
+}
+/* hidden until the script has measured the frame */
+.udgam-sponsors .sp-ring:not(.is-ready) .sp-ring__center {
+  display: none;
+}
+.udgam-sponsors .sp-ring__center--banner {
+  padding: 0.7rem 1rem;
+}
+.udgam-sponsors .sp-ring__logo {
+  display: block;
   width: auto;
-  max-width: 90%;
-  height: 138px;
-  max-height: 88%;
-}
-
-.udgam-sponsors .sp-logo-unstop {
-  object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(28, 73, 128, 0.15));
-  width: 82%;
   height: auto;
-  max-height: 64px;
-}
-
-.udgam-sponsors .sp-logo-union-bank {
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(200, 16, 46, 0.12));
-  width: 84%;
-  height: auto;
-  max-height: 68px;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35));
 }
 
-.udgam-sponsors .sp-logo-canara-bank {
-  object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(0, 102, 178, 0.12));
-  width: 84%;
-  height: auto;
-  max-height: 68px;
+/* ---------- All partners: tiles ---------- */
+.udgam-sponsors .tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 1.1rem 1.1rem 1rem;
+  border-radius: var(--sp-radius-lg);
+  background: var(--sp-card);
+  border: 1.5px solid var(--sp-card-border);
+  box-shadow: var(--sp-shadow-card);
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+  overflow: hidden;
 }
-
-.udgam-sponsors .sp-logo-nbcc {
-  object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(0, 75, 135, 0.12));
-  width: 86%;
-  height: auto;
-  max-height: 68px;
-}
-
-.udgam-sponsors .sp-logo-cisb {
-  object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(244, 170, 25, 0.15));
-  width: 82%;
-  height: auto;
-  max-height: 70px;
-}
-
-.udgam-sponsors .sp-logo-sistema {
-  object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(8, 77, 86, 0.15));
-  width: 82%;
-  height: auto;
-  max-height: 72px;
-}
-
-.udgam-sponsors .sp-logo-the-kollektor {
-  object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.2));
-  width: 86%;
-  height: auto;
-  max-height: 62px;
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-showcase-logo {
-  transform: scale(1.06);
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-quarks-tech {
-  filter: drop-shadow(0 6px 20px #2bb67380);
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-krafton {
-  filter: drop-shadow(0 4px 14px rgba(243, 132, 43, 0.35));
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-unstop {
-  filter: drop-shadow(0 4px 14px rgba(28, 73, 128, 0.35));
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-union-bank {
-  filter: drop-shadow(0 4px 14px rgba(200, 16, 46, 0.3));
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-canara-bank {
-  filter: drop-shadow(0 4px 14px rgba(0, 102, 178, 0.3));
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-nbcc {
-  filter: drop-shadow(0 4px 14px rgba(0, 75, 135, 0.3));
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-cisb {
-  filter: drop-shadow(0 4px 14px rgba(244, 170, 25, 0.35));
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-sistema {
-  filter: drop-shadow(0 4px 14px rgba(8, 77, 86, 0.35));
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-the-kollektor {
-  filter: drop-shadow(0 4px 14px rgba(212, 175, 55, 0.35));
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-logo-dominos {
-  filter: drop-shadow(0 8px 24px #e3183740) drop-shadow(0 4px 14px #0064914d);
-}
-
-.udgam-sponsors .sp-showcase-overlay {
-  pointer-events: none;
-  opacity: 0.4;
-  background: linear-gradient(135deg, #ffffff40 0%, #ffffff08 40%, #0000 60%);
-  transition: opacity 0.3s;
+.udgam-sponsors .tile::before {
+  content: "";
   position: absolute;
   inset: 0;
+  background: radial-gradient(120% 80% at 50% -20%, rgba(249, 168, 201, 0.35), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-showcase-overlay {
-  opacity: 0.85;
-}
-
-/* Fallback (no logo) */
-.udgam-sponsors .sp-showcase-fallback {
-  color: var(--sky);
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  display: flex;
-}
-
-.udgam-sponsors .sp-fallback-icon {
-  font-size: 2.2rem;
-}
-
-.udgam-sponsors .sp-fallback-initials {
-  font-family: var(--font-serif);
-  font-size: 1.8rem;
-  font-weight: 800;
-}
-
-/* Title */
-.udgam-sponsors .sp-title {
-  font-family: var(--font-serif);
-  color: #0b0b0b;
-  justify-content: center;
-  align-items: center;
-  height: 32px;
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: 700;
-  line-height: 1.2;
+.udgam-sponsors .tile::after {
+  content: "✿";
+  position: absolute;
+  top: 0.6rem;
+  right: 0.8rem;
+  font-size: 0.9rem;
+  color: var(--sp-blossom);
+  opacity: 0;
+  transform: rotate(-30deg) scale(0.6);
   transition:
-    transform 0.35s,
-    color 0.3s;
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+.udgam-sponsors .tile:hover {
+  border-color: rgba(201, 58, 124, 0.45);
+  box-shadow: 0 28px 70px -28px rgba(201, 58, 124, 0.55);
+}
+.udgam-sponsors .tile:hover::before {
+  opacity: 1;
+}
+.udgam-sponsors .tile:hover::after {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+/* Hover decorations must not sit over the button and swallow clicks */
+.udgam-sponsors .tile::before,
+.udgam-sponsors .tile::after {
+  pointer-events: none;
+}
+.udgam-sponsors .tile > * {
+  position: relative;
+  z-index: 1;
+}
+
+.udgam-sponsors .tile__logo {
   display: flex;
-  transform: translateZ(12px);
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 92px;
+  padding: 0.6rem 0.9rem;
+  border-radius: 1.1rem;
+  background: #fff;
+  border: 1px solid rgba(214, 170, 196, 0.35);
+}
+.udgam-sponsors .tile__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.06));
+}
+.udgam-sponsors .tile--dark .tile__logo {
+  background: linear-gradient(145deg, #0f1f1a, #16302a 60%, #0b1714);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.udgam-sponsors .tile__meta {
+  text-align: center;
+  line-height: 1.25;
+}
+.udgam-sponsors .tile__name {
+  display: block;
+  margin: 0;
+  font-family: var(--sp-font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--sp-fg);
+}
+.udgam-sponsors .tile__link {
+  margin-top: auto;
 }
 
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-title {
-  color: #000;
-  transform: translateZ(18px);
-}
-
-/* Badge row */
-.udgam-sponsors .sp-badge-row {
+/* ---------- Filters & grid ---------- */
+.udgam-sponsors .filters {
+  display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
-  gap: 7px;
-  min-height: 30px;
-  margin-top: 8px;
-  transition: transform 0.35s;
-  display: flex;
-  transform: translateZ(12px);
+  gap: 0.5rem;
+  margin-bottom: 1.75rem;
+}
+.udgam-sponsors .filters button {
+  padding: 0.55rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid var(--sp-glass-border);
+  background: var(--sp-glass-strong);
+  box-shadow: var(--sp-shadow-soft);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--sp-fg-soft);
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.2s ease;
+}
+.udgam-sponsors .filters button:hover {
+  transform: translateY(-1px);
+}
+.udgam-sponsors .filters button[aria-selected="true"] {
+  background: var(--sp-gradient-btn);
+  color: var(--sp-primary-fg);
+  border-color: transparent;
+  box-shadow: var(--sp-shadow-glow);
 }
 
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-badge-row {
-  transform: translateZ(18px);
+.udgam-sponsors .grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+}
+.udgam-sponsors .grid__empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--sp-muted);
+  padding: 2rem 0;
 }
 
-.udgam-sponsors .sp-tier-badge {
-  font-family: var(--font-serif);
+/* ---------- Stats ---------- */
+.udgam-sponsors .stats {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+}
+.udgam-sponsors .stat {
+  padding: 1.25rem 1rem;
+  border-radius: var(--sp-radius);
+  text-align: center;
+}
+.udgam-sponsors .stat__value {
+  font-family: var(--sp-font-display);
+  font-weight: 800;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  line-height: 1;
+  background: var(--sp-gradient-title);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.udgam-sponsors .stat__label {
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  background: oklch(100% 0 0 / 0.85);
-  border: 1px solid;
-  border-radius: 9999px;
-  align-items: center;
-  padding: 3px 10px;
-  font-size: 0.62rem;
-  font-weight: 700;
-  display: inline-flex;
-  box-shadow: 0 2px 6px #0000000a;
+  color: var(--sp-muted);
 }
 
-.udgam-sponsors .sp-category-badge {
-  font-family: var(--font-sans);
-  color: var(--muted-foreground);
-  border: 1px solid var(--border);
-  background: oklch(95% 0.02 230 / 0.85);
-  border-radius: 9999px;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  font-size: 0.65rem;
-  font-weight: 600;
-  display: inline-flex;
+/* ---------- Enquiry ---------- */
+.udgam-sponsors .cta__card {
+  display: grid;
+  gap: 2rem;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  border-radius: var(--sp-radius-lg);
+  background: var(--sp-glass-strong);
 }
-
-/* Description */
-.udgam-sponsors .sp-desc {
-  color: var(--muted-foreground);
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  text-align: center;
-  -webkit-box-orient: vertical;
-  height: 60px;
-  margin: 12px 0 0;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  transition: transform 0.35s;
-  display: -webkit-box;
-  overflow: hidden;
-  transform: translateZ(8px);
-}
-
-.udgam-sponsors .sponsor-pass-card-wrapper:hover .sp-desc {
-  transform: translateZ(14px);
-}
-
-/* CTA button */
-.udgam-sponsors .sp-btn {
-  z-index: 2;
-  width: 100%;
-  font-family: var(--font-sans);
-  color: #fff;
-  background: var(--gradient-blossom);
-  cursor: pointer;
-  box-shadow: 0 6px 18px -4px color-mix(in oklab, var(--blossom-deep) 60%, transparent);
-  border-radius: 9999px;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: auto;
-  padding: 11px 20px;
-  font-size: 0.86rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-  display: inline-flex;
-  position: relative;
-  transform: translateZ(16px);
-}
-
-.udgam-sponsors .sp-btn:hover {
-  box-shadow: 0 12px 28px -4px color-mix(in oklab, var(--blossom-deep) 85%, transparent);
-  filter: brightness(1.12);
-  transform: translateZ(32px) translateY(-3px) scale(1.02);
-}
-
-.udgam-sponsors .sp-btn:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 3px;
-}
-
-.udgam-sponsors .sp-btn-arrow {
-  font-size: 1.05rem;
-  transition: transform 0.2s;
-}
-
-.udgam-sponsors .sp-btn:hover .sp-btn-arrow {
-  transform: translate(3px, -3px);
-}
-
-/* ── Empty category ──────────────────────────────────────────── */
-
-.udgam-sponsors .sponsor-empty-category {
-  text-align: center;
-  color: var(--muted-foreground);
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 40px 24px;
-  display: flex;
-}
-
-.udgam-sponsors .sponsor-empty-icon {
-  opacity: 0.6;
-  font-size: 2rem;
-}
-
-.udgam-sponsors .sponsor-empty-text {
-  margin: 0;
-  font-size: 0.95rem;
-}
-
-/* ── Reduced motion ──────────────────────────────────────────── */
-
-@media (prefers-reduced-motion: reduce) {
-  .udgam-sponsors .sp-card {
-    transform: none !important;
+@media (min-width: 900px) {
+  .udgam-sponsors .cta__card {
+    grid-template-columns: 1.05fr 1fr;
+    align-items: start;
   }
-  .udgam-sponsors .sponsor-behind-glow {
+}
+.udgam-sponsors .cta__copy h2 {
+  margin: 1rem 0 0.9rem;
+  font-size: clamp(1.9rem, 4vw, 2.7rem);
+  letter-spacing: -0.015em;
+}
+.udgam-sponsors .cta__copy p {
+  margin: 0 0 1rem;
+  color: var(--sp-fg-soft);
+}
+.udgam-sponsors .cta__points {
+  display: grid;
+  gap: 0.45rem;
+  margin-bottom: 1.25rem;
+}
+.udgam-sponsors .cta__points li {
+  position: relative;
+  padding-left: 1.5rem;
+  font-weight: 600;
+  color: var(--sp-fg);
+}
+.udgam-sponsors .cta__points li::before {
+  content: "✿";
+  position: absolute;
+  left: 0;
+  color: var(--sp-blossom-deep);
+}
+.udgam-sponsors .cta__mail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--sp-card-border);
+  box-shadow: var(--sp-shadow-soft);
+  font-weight: 700;
+  color: var(--sp-ink-blue);
+  transition: transform 0.2s ease;
+}
+.udgam-sponsors .cta__mail:hover {
+  transform: translateY(-2px);
+}
+
+.udgam-sponsors .cta__form {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 1.25rem;
+  border-radius: var(--sp-radius);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--sp-glass-border);
+}
+@media (max-width: 560px) {
+  .udgam-sponsors .cta__form {
+    grid-template-columns: 1fr;
+  }
+}
+.udgam-sponsors .field {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.udgam-sponsors .field--full {
+  grid-column: 1 / -1;
+}
+.udgam-sponsors .field label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sp-muted);
+}
+.udgam-sponsors .field input,
+.udgam-sponsors .field select,
+.udgam-sponsors .field textarea {
+  width: 100%;
+  padding: 0.7rem 0.95rem;
+  border-radius: 0.9rem;
+  border: 1.5px solid rgba(214, 170, 196, 0.6);
+  background: #fff;
+  color: var(--sp-fg);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.udgam-sponsors .field input:focus,
+.udgam-sponsors .field select:focus,
+.udgam-sponsors .field textarea:focus {
+  outline: none;
+  border-color: var(--sp-primary);
+  box-shadow: 0 0 0 4px rgba(217, 80, 138, 0.15);
+  border-radius: 0.9rem;
+}
+.udgam-sponsors .field textarea {
+  resize: vertical;
+  min-height: 6rem;
+}
+.udgam-sponsors .field.is-invalid input {
+  border-color: #d64545;
+}
+.udgam-sponsors .cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+.udgam-sponsors .cta__note {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--sp-muted);
+}
+.udgam-sponsors .cta__note.is-success {
+  color: #1f7a4d;
+  font-weight: 700;
+}
+.udgam-sponsors .cta__note.is-error {
+  color: #c0392b;
+  font-weight: 700;
+}
+
+/* ---------- Touch screens ---------- */
+@media (pointer: coarse) {
+  .udgam-sponsors .btn--sm {
+    min-height: 44px;
+  }
+  .udgam-sponsors .showcase__btn {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+  }
+  .udgam-sponsors .filters button {
+    min-height: 40px;
+  }
+}
+
+/* ---------- Reveal on scroll ---------- */
+.udgam-sponsors .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+.udgam-sponsors .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .udgam-sponsors .bg__image,
+  .udgam-sponsors .bg__glow,
+  .udgam-sponsors .petal,
+  .udgam-sponsors .petal__inner {
+    animation: none !important;
+  }
+  .udgam-sponsors .petals {
     display: none;
+  }
+  .udgam-sponsors .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .udgam-sponsors .tile,
+  .udgam-sponsors .btn,
+  .udgam-sponsors .rtile {
+    transition: none;
   }
 }
