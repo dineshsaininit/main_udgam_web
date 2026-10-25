@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import SponsorsPage from "@/features/sponsors/SponsorsPage";
 import sponsorsCss from "@/features/sponsors/sponsors.css?url";
-import { getSponsors } from "@/lib/sponsors.functions";
 
 export const Route = createFileRoute("/sponsors")({
   head: () => ({
@@ -10,21 +9,21 @@ export const Route = createFileRoute("/sponsors")({
       {
         name: "description",
         content:
-          "Meet the sponsors and partners powering Udgam 2K26 — from food and clothing to tech and media.",
+          "Meet the partners powering Udgam 2K26, NIT Sikkim's cherry-blossom festival, and find out how your brand can bloom with us.",
       },
       { property: "og:title", content: "Sponsors — Udgam 2K26" },
       {
         property: "og:description",
-        content: "The brands and partners that make Udgam 2K26 possible.",
+        content: "Where Dreams Bloom. Meet the official partners of Udgam 2K26 and become one.",
       },
     ],
-    links: [{ rel: "stylesheet", href: sponsorsCss }],
+    links: [
+      { rel: "stylesheet", href: sponsorsCss },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap",
+      },
+    ],
   }),
-  loader: () => getSponsors(),
-  component: Sponsors,
+  component: SponsorsPage,
 });
-
-function Sponsors() {
-  const data = Route.useLoaderData();
-  return <SponsorsPage data={data} />;
-}
