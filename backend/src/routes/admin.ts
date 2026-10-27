@@ -4,17 +4,20 @@ import { z } from "zod";
 import { EVENTS } from "../data/events";
 import { requireAdmin, requireAdminOrSyncToken } from "../middleware/auth";
 import { adminLogin } from "../services/adminAuth";
+import type { AdminRole } from "../services/adminAuth";
 import { getEventRegistrations, getOverview, searchRegistrations } from "../services/adminData";
 import { syncPending } from "../services/backup";
 import type { RegistrationStatus } from "../types";
 
 // Admin API (read-only over registrations).
-//   POST /api/admin/login                         -> { ok, token, username, expiresAt }
-//   GET  /api/admin/session                       -> { username }
+//   POST /api/admin/login                         -> { ok, token, username, role, expiresAt }
+//   GET  /api/admin/session                       -> { username, role }
 //   GET  /api/admin/overview
 //   GET  /api/admin/events/:eventId/registrations?status=confirmed|pending|...|all
 //   GET  /api/admin/search?q=
 //   POST /api/admin/backup-sync                   (admin token or BACKUP_SYNC_TOKEN)
+//
+// Revenue fields are stripped from overview/event data when the caller has the "lead" role.
 
 export const adminRouter = Router();
 
@@ -31,6 +34,11 @@ const failure = (res: Response, label: string, err: unknown) => {
   console.error(`[admin] ${label} failed`, err);
   res.status(500).json({ ok: false, error: "error", message: "Something went wrong loading this data." });
 };
+
+/** Zero-out revenue fields so leads never see money information. */
+function stripRevenue<T extends { revenuePaise: number }>(obj: T): T {
+  return { ...obj, revenuePaise: 0 };
+}
 
 adminRouter.post("/login", loginLimiter, async (req, res) => {
   const parsed = z
@@ -50,12 +58,27 @@ adminRouter.post("/login", loginLimiter, async (req, res) => {
 });
 
 adminRouter.get("/session", requireAdmin, (_req, res) => {
-  res.json({ username: res.locals["admin"] as string });
+  res.json({
+    username: res.locals["admin"] as string,
+    role: (res.locals["adminRole"] as AdminRole) ?? "admin",
+  });
 });
 
 adminRouter.get("/overview", requireAdmin, async (_req, res) => {
   try {
-    res.json({ ok: true, data: await getOverview() });
+    const role = (res.locals["adminRole"] as AdminRole) ?? "admin";
+    const data = await getOverview();
+    if (role === "lead") {
+      // Strip revenue from every event and from totals
+      const sanitized = {
+        ...data,
+        events: data.events.map(stripRevenue),
+        totals: { ...data.totals, revenuePaise: 0 },
+      };
+      res.json({ ok: true, data: sanitized });
+    } else {
+      res.json({ ok: true, data });
+    }
   } catch (err) {
     failure(res, "overview", err);
   }
@@ -72,7 +95,12 @@ adminRouter.get("/events/:eventId/registrations", requireAdmin, async (req, res)
     return;
   }
   try {
-    const data = await getEventRegistrations(eventId, status.data as RegistrationStatus | "all");
+    const role = (res.locals["adminRole"] as AdminRole) ?? "admin";
+    const rawData = await getEventRegistrations(eventId, status.data as RegistrationStatus | "all");
+    const data =
+      role === "lead"
+        ? rawData.map((r) => ({ ...r, amountPaise: 0 }))
+        : rawData;
     res.json({ ok: true, data });
   } catch (err) {
     failure(res, "event registrations", err);
@@ -86,7 +114,13 @@ adminRouter.get("/search", requireAdmin, async (req, res) => {
     return;
   }
   try {
-    res.json({ ok: true, data: await searchRegistrations(q.data) });
+    const role = (res.locals["adminRole"] as AdminRole) ?? "admin";
+    const rawData = await searchRegistrations(q.data);
+    const data =
+      role === "lead"
+        ? rawData.map((r) => ({ ...r, amountPaise: 0 }))
+        : rawData;
+    res.json({ ok: true, data });
   } catch (err) {
     failure(res, "search", err);
   }

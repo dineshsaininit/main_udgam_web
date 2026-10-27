@@ -36,23 +36,25 @@ const sizeText = (s: { min: number; max: number }) =>
 
 export default function AdminPage() {
   const [user, setUser] = useState<string | null | undefined>(undefined);
+  const [role, setRole] = useState<"admin" | "lead">("admin");
   // stable identity: Dashboard's data loaders depend on it
   const handleLoggedOut = useCallback(() => setUser(null), []);
 
   useEffect(() => {
     getAdminSession()
-      .then((s) => setUser(s.username))
+      .then((s) => { setUser(s.username); setRole(s.role); })
       .catch(() => setUser(null));
   }, []);
 
   if (user === undefined) return <div className="adm-center">Loading…</div>;
-  if (!user) return <Login onLoggedIn={setUser} />;
-  return <Dashboard user={user} onLoggedOut={handleLoggedOut} />;
+  if (!user) return <Login onLoggedIn={(u, r) => { setUser(u); setRole(r); }} />;
+  return <Dashboard user={user} role={role} onLoggedOut={handleLoggedOut} />;
 }
+
 
 // ---------------------------------------------------------------- login
 
-function Login({ onLoggedIn }: { onLoggedIn: (u: string) => void }) {
+function Login({ onLoggedIn }: { onLoggedIn: (u: string, role: "admin" | "lead") => void }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +67,7 @@ function Login({ onLoggedIn }: { onLoggedIn: (u: string) => void }) {
     setError(null);
     const res = await loginAdmin({ data: { username, password } }).catch(() => null);
     setBusy(false);
-    if (res?.ok) onLoggedIn(res.username);
+    if (res?.ok) onLoggedIn(res.username, res.role);
     else setError(res?.message ?? "Couldn't reach the server.");
   };
 
@@ -109,7 +111,7 @@ function Login({ onLoggedIn }: { onLoggedIn: (u: string) => void }) {
 
 // ---------------------------------------------------------------- shell
 
-function Dashboard({ user, onLoggedOut }: { user: string; onLoggedOut: () => void }) {
+function Dashboard({ user, role, onLoggedOut }: { user: string; role: "admin" | "lead"; onLoggedOut: () => void }) {
   const [view, setView] = useState<View>({ kind: "overview" });
   const [overview, setOverview] = useState<AdminOverview | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -173,7 +175,7 @@ function Dashboard({ user, onLoggedOut }: { user: string; onLoggedOut: () => voi
           </button>
         </nav>
         <div className="adm-user">
-          <span>{user}</span>
+          <span>{user}{role === "lead" && <span className="adm-tag" style={{ marginLeft: "6px" }}>Lead</span>}</span>
           <button className="adm-btn" onClick={logout}>
             Log out
           </button>
@@ -194,6 +196,7 @@ function Dashboard({ user, onLoggedOut }: { user: string; onLoggedOut: () => voi
               onRefresh={loadOverview}
               onOpenEvent={(eventId) => setView({ kind: "event", eventId })}
               unwrap={unwrap}
+              role={role}
             />
           ) : (
             <p className="adm-muted">{loading ? "Loading dashboard…" : ""}</p>
@@ -207,9 +210,10 @@ function Dashboard({ user, onLoggedOut }: { user: string; onLoggedOut: () => voi
               void loadOverview();
             }}
             unwrap={unwrap}
+            role={role}
           />
         )}
-        {view.kind === "search" && <SearchView unwrap={unwrap} />}
+        {view.kind === "search" && <SearchView unwrap={unwrap} role={role} />}
       </main>
     </div>
   );
@@ -225,16 +229,20 @@ function Overview({
   onRefresh,
   onOpenEvent,
   unwrap,
+  role,
 }: {
   data: AdminOverview;
   loading: boolean;
   onRefresh: () => void;
   onOpenEvent: (id: string) => void;
   unwrap: Unwrap;
+  role: "admin" | "lead";
 }) {
   const [syncMsg, setSyncMsg] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [sort, setSort] = useState<"name" | "teams" | "revenue">("teams");
+
+  const isLead = role === "lead";
 
   const events = useMemo(() => {
     const list = [...data.events];
@@ -278,25 +286,27 @@ function Overview({
         <Stat label="Confirmed teams" value={t.confirmedTeams} />
         <Stat label="Participants (entries)" value={t.confirmedParticipants} />
         <Stat label="Unique students" value={t.uniqueParticipants} />
-        <Stat label="Revenue collected" value={rupees(t.revenuePaise)} />
+        {!isLead && <Stat label="Revenue collected" value={rupees(t.revenuePaise)} />}
         <Stat label="Paying right now" value={t.pendingTeams} />
         <Stat label="Refunds to process" value={t.refunds} tone={t.refunds ? "bad" : undefined} />
-        <div
-          className={`adm-card ${data.backup.configured && data.backup.unsynced === 0 ? "" : "is-warn"}`}
-        >
-          <span className="adm-card-label">Firebase backup</span>
-          <strong className="adm-card-value">
-            {!data.backup.configured
-              ? "Not configured"
-              : data.backup.unsynced === 0
-                ? "Up to date"
-                : `${data.backup.unsynced} pending`}
-          </strong>
-          <button className="adm-btn adm-btn-small" onClick={sync} disabled={syncing}>
-            {syncing ? "Backing up…" : "Back up now"}
-          </button>
-          {syncMsg && <span className="adm-muted">{syncMsg}</span>}
-        </div>
+        {!isLead && (
+          <div
+            className={`adm-card ${data.backup.configured && data.backup.unsynced === 0 ? "" : "is-warn"}`}
+          >
+            <span className="adm-card-label">Firebase backup</span>
+            <strong className="adm-card-value">
+              {!data.backup.configured
+                ? "Not configured"
+                : data.backup.unsynced === 0
+                  ? "Up to date"
+                  : `${data.backup.unsynced} pending`}
+            </strong>
+            <button className="adm-btn adm-btn-small" onClick={sync} disabled={syncing}>
+              {syncing ? "Backing up…" : "Back up now"}
+            </button>
+            {syncMsg && <span className="adm-muted">{syncMsg}</span>}
+          </div>
+        )}
       </section>
 
       <section className="adm-panel">
@@ -306,7 +316,7 @@ function Overview({
             Sort
             <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
               <option value="teams">Most teams</option>
-              <option value="revenue">Most revenue</option>
+              {!isLead && <option value="revenue">Most revenue</option>}
               <option value="name">Name</option>
             </select>
           </label>
@@ -321,13 +331,13 @@ function Overview({
                 <th className="num">Teams</th>
                 <th className="num">Participants</th>
                 <th className="num">Paying now</th>
-                <th className="num">Revenue</th>
+                {!isLead && <th className="num">Revenue</th>}
                 <th>Last registration</th>
               </tr>
             </thead>
             <tbody>
               {events.map((e) => (
-                <EventRow key={e.eventId} e={e} onOpen={() => onOpenEvent(e.eventId)} />
+                <EventRow key={e.eventId} e={e} onOpen={() => onOpenEvent(e.eventId)} isLead={isLead} />
               ))}
             </tbody>
           </table>
@@ -341,14 +351,14 @@ function Overview({
             These teams paid after their hold expired and a member's spot was taken. Refund them in
             the Razorpay Dashboard → Payments using the payment ID.
           </p>
-          <RegistrationList rows={data.refunds} showEvent />
+          <RegistrationList rows={data.refunds} showEvent isLead={isLead} />
         </section>
       )}
 
       <section className="adm-panel">
         <h2>Latest confirmed registrations</h2>
         {data.recent.length ? (
-          <RegistrationList rows={data.recent} showEvent />
+          <RegistrationList rows={data.recent} showEvent isLead={isLead} />
         ) : (
           <p className="adm-muted">No registrations yet.</p>
         )}
@@ -357,7 +367,7 @@ function Overview({
   );
 }
 
-function EventRow({ e, onOpen }: { e: AdminEventStats; onOpen: () => void }) {
+function EventRow({ e, onOpen, isLead }: { e: AdminEventStats; onOpen: () => void; isLead: boolean }) {
   return (
     <tr className="is-clickable" onClick={onOpen}>
       <td>
@@ -377,7 +387,7 @@ function EventRow({ e, onOpen }: { e: AdminEventStats; onOpen: () => void }) {
       <td className="num">{e.confirmedTeams}</td>
       <td className="num">{e.confirmedParticipants}</td>
       <td className="num">{e.pendingTeams || ""}</td>
-      <td className="num">{e.revenuePaise ? rupees(e.revenuePaise) : "—"}</td>
+      {!isLead && <td className="num">{e.revenuePaise ? rupees(e.revenuePaise) : "—"}</td>}
       <td>{when(e.lastConfirmedAt)}</td>
     </tr>
   );
@@ -407,12 +417,15 @@ function EventView({
   stats,
   onBack,
   unwrap,
+  role,
 }: {
   eventId: string;
   stats: AdminEventStats | undefined;
   onBack: () => void;
   unwrap: Unwrap;
+  role: "admin" | "lead";
 }) {
+  const isLead = role === "lead";
   const [status, setStatus] = useState<RegistrationStatus | "all">("confirmed");
   const [rows, setRows] = useState<AdminRegistration[] | null>(null);
   const [filter, setFilter] = useState("");
@@ -477,7 +490,7 @@ function EventView({
                   ? "Free"
                   : `₹${stats.fee} per ${stats.feeUnit ?? "team"}`}{" "}
               · {stats.confirmedTeams} confirmed {isTeamEvent ? "teams" : "entries"},{" "}
-              {stats.confirmedParticipants} participants · {rupees(stats.revenuePaise)}
+              {stats.confirmedParticipants} participants{isLead ? "" : ` · ${rupees(stats.revenuePaise)}`}
             </p>
           )}
         </div>
@@ -533,7 +546,7 @@ function EventView({
         {!rows ? (
           <p className="adm-muted">Loading…</p>
         ) : shown.length ? (
-          <RegistrationList rows={shown} />
+          <RegistrationList rows={shown} isLead={isLead} />
         ) : (
           <p className="adm-muted">No registrations match.</p>
         )}
@@ -623,7 +636,8 @@ function PrintSheet({
 
 // ---------------------------------------------------------------- search
 
-function SearchView({ unwrap }: { unwrap: Unwrap }) {
+function SearchView({ unwrap, role }: { unwrap: Unwrap; role: "admin" | "lead" }) {
+  const isLead = role === "lead";
   const [q, setQ] = useState("");
   const [rows, setRows] = useState<AdminRegistration[] | null>(null);
   const [busy, setBusy] = useState(false);
@@ -664,7 +678,7 @@ function SearchView({ unwrap }: { unwrap: Unwrap }) {
               {rows.length} result{rows.length === 1 ? "" : "s"}
               {rows.length === 100 ? " (showing first 100)" : ""}
             </p>
-            <RegistrationList rows={rows} showEvent />
+            <RegistrationList rows={rows} showEvent isLead={isLead} />
           </>
         ) : (
           <p className="adm-muted">Nothing found.</p>
@@ -678,20 +692,22 @@ function SearchView({ unwrap }: { unwrap: Unwrap }) {
 function RegistrationList({
   rows,
   showEvent = false,
+  isLead = false,
 }: {
   rows: AdminRegistration[];
   showEvent?: boolean;
+  isLead?: boolean;
 }) {
   return (
     <div className="adm-regs">
       {rows.map((r) => (
-        <RegistrationCard key={r.id} r={r} showEvent={showEvent} />
+        <RegistrationCard key={r.id} r={r} showEvent={showEvent} isLead={isLead} />
       ))}
     </div>
   );
 }
 
-function RegistrationCard({ r, showEvent }: { r: AdminRegistration; showEvent: boolean }) {
+function RegistrationCard({ r, showEvent, isLead }: { r: AdminRegistration; showEvent: boolean; isLead: boolean }) {
   const [open, setOpen] = useState(false);
   const leader = r.members.find((m) => m.is_leader) ?? r.members[0];
   const copy = (text: string) => void navigator.clipboard?.writeText(text).catch(() => undefined);
@@ -704,8 +720,7 @@ function RegistrationCard({ r, showEvent }: { r: AdminRegistration; showEvent: b
           {r.teamName || leader?.name || "—"}
         </span>
         <span className="adm-reg-meta">
-          {r.members.length} {r.members.length === 1 ? "person" : "people"} ·{" "}
-          {rupees(r.amountPaise)} ·{" "}
+          {r.members.length} {r.members.length === 1 ? "person" : "people"}{!isLead && (<> ·{" "}{rupees(r.amountPaise)}</>)} ·{" "}
           <span className={`adm-status is-${r.status}`}>{STATUS_LABEL[r.status]}</span>
         </span>
         <span className="adm-reg-chev">{open ? "▴" : "▾"}</span>

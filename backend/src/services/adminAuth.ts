@@ -3,13 +3,17 @@ import { optionalEnv } from "../config/env";
 
 // Admin panel authentication.
 //
-// Credentials live ONLY in environment variables (ADMIN_USERNAME / ADMIN_PASSWORD), never in code.
+// Credentials live ONLY in environment variables:
+//   Admin role : ADMIN_USERNAME / ADMIN_PASSWORD
+//   Lead role  : LEAD_USERNAME  / LEAD_PASSWORD  (read-only, no revenue data)
 // A successful login returns a signed, expiring bearer token; the admin page sends it in the
 // Authorization header (cookies are unreliable between the website and the API on different
 // domains). Changing ADMIN_PASSWORD or ADMIN_SESSION_SECRET invalidates every issued token.
 // Failed logins are throttled per IP and globally (udgam_admin_login_blocked in db/schema.sql).
 
 const SESSION_HOURS = 8;
+
+export type AdminRole = "admin" | "lead";
 
 interface AdminConfig {
   username: string;
@@ -23,6 +27,13 @@ function adminConfig(): AdminConfig | null {
   const secret = optionalEnv("ADMIN_SESSION_SECRET");
   if (!username || !password || !secret || secret.length < 32) return null;
   return { username, password, secret };
+}
+
+function leadConfig(): { username: string; password: string } | null {
+  const username = optionalEnv("LEAD_USERNAME");
+  const password = optionalEnv("LEAD_PASSWORD");
+  if (!username || !password) return null;
+  return { username, password };
 }
 
 const enc = new TextEncoder();
@@ -56,14 +67,20 @@ async function secretEquals(given: string, expected: string, key: string): Promi
 // the signing key includes the password so changing it invalidates all tokens
 const signingKey = (cfg: AdminConfig) => `${cfg.secret}\u0000${cfg.password}`;
 
-async function makeToken(cfg: AdminConfig): Promise<{ token: string; expiresAt: number }> {
+async function makeToken(
+  cfg: AdminConfig,
+  username: string,
+  role: AdminRole,
+): Promise<{ token: string; expiresAt: number }> {
   const expiresAt = Date.now() + SESSION_HOURS * 3600_000;
-  const payload = b64url(enc.encode(JSON.stringify({ u: cfg.username, exp: expiresAt })));
+  const payload = b64url(enc.encode(JSON.stringify({ u: username, role, exp: expiresAt })));
   return { token: `${payload}.${b64url(await hmac(signingKey(cfg), payload))}`, expiresAt };
 }
 
-/** Username in a valid, unexpired token, or null. */
-export async function verifyAdminToken(token: string | undefined): Promise<string | null> {
+/** Returns { username, role } from a valid, unexpired token, or null. */
+export async function verifyAdminToken(
+  token: string | undefined,
+): Promise<{ username: string; role: AdminRole } | null> {
   const cfg = adminConfig();
   if (!cfg || !token || token.length > 512) return null;
   const [payload, sig] = token.split(".");
@@ -72,19 +89,22 @@ export async function verifyAdminToken(token: string | undefined): Promise<strin
     if (!equalBytes(fromB64url(sig), await hmac(signingKey(cfg), payload))) return null;
     const data = JSON.parse(new TextDecoder().decode(fromB64url(payload))) as {
       u?: string;
+      role?: string;
       exp?: number;
     };
-    if (data.u !== cfg.username || typeof data.exp !== "number" || data.exp < Date.now()) {
+    if (!data.u || typeof data.exp !== "number" || data.exp < Date.now()) {
       return null;
     }
-    return data.u;
+    // tokens without a role field are legacy admin tokens — treat them as admin
+    const role: AdminRole = data.role === "lead" ? "lead" : "admin";
+    return { username: data.u, role };
   } catch {
     return null;
   }
 }
 
 export type LoginResult =
-  | { ok: true; username: string; token: string; expiresAt: number }
+  | { ok: true; username: string; role: AdminRole; token: string; expiresAt: number }
   | { ok: false; message: string };
 
 export async function adminLogin(
@@ -107,14 +127,29 @@ export async function adminLogin(
     return { ok: false, message: "Too many failed attempts. Try again in 15 minutes." };
   }
 
-  const userOk = await secretEquals(username, cfg.username, cfg.secret);
-  const passOk = await secretEquals(password, cfg.password, cfg.secret);
-  const ok = userOk && passOk;
-  await db()`INSERT INTO admin_login_attempts (ip, succeeded) VALUES (${clientIp}, ${ok})`;
-  if (!ok) {
-    console.warn("[admin] failed login", clientIp);
-    return { ok: false, message: "Wrong username or password." };
+  // --- Check admin credentials ---
+  const adminUserOk = await secretEquals(username, cfg.username, cfg.secret);
+  const adminPassOk = await secretEquals(password, cfg.password, cfg.secret);
+  if (adminUserOk && adminPassOk) {
+    await db()`INSERT INTO admin_login_attempts (ip, succeeded) VALUES (${clientIp}, ${true})`;
+    const { token, expiresAt } = await makeToken(cfg, cfg.username, "admin");
+    return { ok: true, username: cfg.username, role: "admin", token, expiresAt };
   }
-  const { token, expiresAt } = await makeToken(cfg);
-  return { ok: true, username: cfg.username, token, expiresAt };
+
+  // --- Check lead credentials ---
+  const lead = leadConfig();
+  if (lead) {
+    const leadUserOk = await secretEquals(username, lead.username, cfg.secret);
+    const leadPassOk = await secretEquals(password, lead.password, cfg.secret);
+    if (leadUserOk && leadPassOk) {
+      await db()`INSERT INTO admin_login_attempts (ip, succeeded) VALUES (${clientIp}, ${true})`;
+      const { token, expiresAt } = await makeToken(cfg, lead.username, "lead");
+      return { ok: true, username: lead.username, role: "lead", token, expiresAt };
+    }
+  }
+
+  // --- Both failed ---
+  await db()`INSERT INTO admin_login_attempts (ip, succeeded) VALUES (${clientIp}, ${false})`;
+  console.warn("[admin] failed login", clientIp);
+  return { ok: false, message: "Wrong username or password." };
 }

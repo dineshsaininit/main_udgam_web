@@ -7,14 +7,15 @@ const bearer = (req: Request) => {
   return /^Bearer\s+/i.test(h) ? h.replace(/^Bearer\s+/i, "").trim() : undefined;
 };
 
-/** Rejects the request with 401 unless it carries a valid admin token. */
+/** Rejects the request with 401 unless it carries a valid admin or lead token. */
 export async function requireAdmin(req: Request, res: Response, next: NextFunction) {
-  const user = await verifyAdminToken(bearer(req));
-  if (!user) {
+  const info = await verifyAdminToken(bearer(req));
+  if (!info) {
     res.status(401).json({ ok: false, error: "unauthorized", message: "Please log in again." });
     return;
   }
-  res.locals["admin"] = user;
+  res.locals["admin"] = info.username;
+  res.locals["adminRole"] = info.role; // "admin" | "lead"
   next();
 }
 
