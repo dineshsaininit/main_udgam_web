@@ -1,7 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { Clock, MapPin, MoonStar, Music2, Sparkles, Sun, Sunrise, Sunset } from "lucide-react";
 import {
+  memo,
   useEffect,
   useMemo,
   useRef,
@@ -60,6 +61,22 @@ const shortDate = (date: string) =>
     timeZone: "Asia/Kolkata",
   });
 
+/**
+ * Phones and tablets: skip the blur in page transitions, which repaints the whole panel
+ * every frame. Client-only, so the first render matches the server.
+ */
+function useLite(): boolean {
+  const [lite, setLite] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: none), (max-width: 768px)");
+    const update = () => setLite(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  return lite;
+}
+
 /** Wall-clock time, client-only so the server render never disagrees with the browser. */
 function useNow(): number | null {
   const [now, setNow] = useState<number | null>(null);
@@ -80,6 +97,8 @@ export default function SchedulePage({
 }) {
   const navigate = useNavigate();
   const now = useNow();
+  const lite = useLite();
+  const blur = (px: number) => (lite ? {} : { filter: `blur(${px}px)` });
   const festDay = FEST_DAYS.find((d) => d.day === (day ?? 0)) ?? FEST_DAYS[0]!;
   const events = useMemo(() => sortedEvents(DAY_SCHEDULE[festDay.day] ?? []), [festDay.day]);
 
@@ -134,9 +153,9 @@ export default function SchedulePage({
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={view}
-            initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -16, filter: "blur(8px)" }}
+            initial={{ opacity: 0, y: 20, ...blur(8) }}
+            animate={{ opacity: 1, y: 0, ...blur(0) }}
+            exit={{ opacity: 0, y: -16, ...blur(8) }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           >
             <h1 className="sch-title">{view === "day" ? "Day Schedule" : "Udgam Nights"}</h1>
@@ -228,9 +247,9 @@ export default function SchedulePage({
                   key={festDay.day}
                   custom={direction}
                   variants={{
-                    enter: (dir: number) => ({ opacity: 0, x: dir * 60, filter: "blur(6px)" }),
-                    center: { opacity: 1, x: 0, filter: "blur(0px)" },
-                    exit: (dir: number) => ({ opacity: 0, x: dir * -60, filter: "blur(6px)" }),
+                    enter: (dir: number) => ({ opacity: 0, x: dir * 60, ...blur(6) }),
+                    center: { opacity: 1, x: 0, ...blur(0) },
+                    exit: (dir: number) => ({ opacity: 0, x: dir * -60, ...blur(6) }),
                   }}
                   initial="enter"
                   animate="center"
@@ -560,6 +579,9 @@ function NightCard({
   featured?: boolean;
 }) {
   const reduce = useReducedMotion();
+  // Off-screen artwork stops animating so only the cards you can see cost anything.
+  const mediaRef = useRef<HTMLDivElement>(null);
+  const onScreen = useInView(mediaRef, { margin: "120px 0px" });
   const tilt = (e: PointerEvent<HTMLElement>) => {
     if (reduce || e.pointerType !== "mouse") return;
     const r = e.currentTarget.getBoundingClientRect();
@@ -589,7 +611,7 @@ function NightCard({
       onPointerMove={tilt}
       onPointerLeave={reset}
     >
-      <div className="sch-act__media">
+      <div ref={mediaRef} className={`sch-act__media ${onScreen ? "" : "is-paused"}`}>
         <NightArt kind={act.art} />
       </div>
       <div className="sch-act__shade" />
@@ -622,7 +644,6 @@ const STARS = Array.from({ length: 70 }, () => ({
   left: (rand() * 100).toFixed(2),
   top: (rand() * 55).toFixed(2),
   size: (1 + rand() * 2.2).toFixed(2),
-  delay: (rand() * 5).toFixed(2),
 }));
 const FIREFLIES = Array.from({ length: 14 }, () => ({
   left: (rand() * 100).toFixed(2),
@@ -643,34 +664,21 @@ function Sky({ period, minutes, stage }: { period: Period; minutes: number; stag
   // The sun rides an arc from 6 AM (left horizon) to 8 PM (right horizon).
   const t = Math.min(1, Math.max(0, (minutes / 60 - 6) / 14));
   const sunX = 6 + t * 88;
-  const sunY = 62 - Math.sin(Math.PI * t) * 50;
+  const sunY = period === "night" ? 80 : 62 - Math.sin(Math.PI * t) * 50;
 
   return (
     <div className={`sch-sky ${reduce ? "is-still" : ""}`} aria-hidden>
-      <img className="sch-land" src={mountainImg} alt="" />
+      <img className="sch-land" src={mountainImg} alt="" decoding="async" />
       {(["morning", "afternoon", "evening", "night"] as const).map((p) => (
         <div key={p} className={`sch-tint tint-${p} ${p === period ? "is-on" : ""}`} />
       ))}
 
-      <div className="sch-stars">
-        {STARS.map((s, i) => (
-          <span
-            key={i}
-            style={{
-              left: `${s.left}%`,
-              top: `${s.top}%`,
-              width: `${s.size}px`,
-              height: `${s.size}px`,
-              animationDelay: `${s.delay}s`,
-            }}
-          />
-        ))}
-        <span className="sch-shooting" />
-      </div>
+      <SkyStars />
 
+      {/* moved with transform (not left/top) so the glide stays on the GPU */}
       <div
         className="sch-sun"
-        style={{ left: `${sunX}%`, top: `${period === "night" ? 80 : sunY}%` }}
+        style={{ transform: `translate3d(calc(${sunX}vw - 50%), calc(${sunY}vh - 50%), 0)` }}
       />
       <div className="sch-moon" />
 
@@ -682,9 +690,42 @@ function Sky({ period, minutes, stage }: { period: Period; minutes: number; stag
         </div>
       )}
 
-      <img className="sch-tree is-left" src={treeImg} alt="" />
-      <img className="sch-tree is-right" src={treeImg} alt="" />
+      <img className="sch-tree is-left" src={treeImg} alt="" decoding="async" />
+      <img className="sch-tree is-right" src={treeImg} alt="" decoding="async" />
 
+      <SkyCritters />
+    </div>
+  );
+}
+
+// The particle layers never change, so they render once instead of on every scene update.
+// Stars twinkle in three groups rather than one animation per star.
+const SkyStars = memo(function SkyStars() {
+  return (
+    <div className="sch-stars">
+      {[0, 1, 2].map((g) => (
+        <div key={g} className="sch-stars__group">
+          {STARS.filter((_, i) => i % 3 === g).map((s, i) => (
+            <span
+              key={i}
+              style={{
+                left: `${s.left}%`,
+                top: `${s.top}%`,
+                width: `${s.size}px`,
+                height: `${s.size}px`,
+              }}
+            />
+          ))}
+        </div>
+      ))}
+      <span className="sch-shooting" />
+    </div>
+  );
+});
+
+const SkyCritters = memo(function SkyCritters() {
+  return (
+    <>
       <div className="sch-flies">
         {FIREFLIES.map((f, i) => (
           <span
@@ -714,6 +755,6 @@ function Sky({ period, minutes, stage }: { period: Period; minutes: number; stag
           </span>
         ))}
       </div>
-    </div>
+    </>
   );
-}
+});
