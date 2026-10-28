@@ -119,6 +119,13 @@ export const SPONSORS: PageSponsor[] = [
     logo: `${LOGOS}/alnus_ravangla_logo.png`,
     url: "https://www.facebook.com/thealnus.ravangla/",
   },
+  {
+    name: "The Waffle Stop",
+    tag: "Food Partner",
+    category: "Food & Drinks",
+    logo: `${LOGOS}/waffle_stop_logo.png`,
+    url: "",
+  },
 ];
 
 /** Display order: sponsors with a website first, those without one last (otherwise list order). */
