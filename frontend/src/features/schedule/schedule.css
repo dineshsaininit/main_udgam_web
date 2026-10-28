@@ -217,6 +217,9 @@
   overflow: hidden;
   pointer-events: none;
   background: #1a1030;
+  /* its own GPU layer: scrolling the page never repaints the sky */
+  transform: translateZ(0);
+  contain: strict;
 }
 .sch-land {
   position: absolute;
@@ -289,12 +292,24 @@
   inset: 0;
   opacity: var(--sch-star-o);
 }
-.sch-stars span:not(.sch-shooting) {
+/* stars twinkle as three layers instead of 70 separate animations */
+.sch-stars__group {
+  position: absolute;
+  inset: 0;
+  animation: sch-twinkle 3.6s ease-in-out infinite;
+  will-change: opacity;
+}
+.sch-stars__group:nth-child(2) {
+  animation-delay: -1.2s;
+}
+.sch-stars__group:nth-child(3) {
+  animation-delay: -2.4s;
+}
+.sch-stars__group span {
   position: absolute;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 0 6px rgba(255, 230, 240, 0.9);
-  animation: sch-twinkle 3.6s ease-in-out infinite;
 }
 .sch-shooting {
   position: absolute;
@@ -311,19 +326,18 @@
 
 .sch-sun {
   position: absolute;
+  left: 0;
+  top: 0;
   width: clamp(70px, 9vw, 120px);
   aspect-ratio: 1;
   border-radius: 50%;
-  translate: -50% -50%;
   background: radial-gradient(circle at 42% 40%, #fffdf6 0%, var(--sch-sun) 60%, transparent 72%);
   box-shadow:
     0 0 70px 26px color-mix(in srgb, var(--sch-sun) 50%, transparent),
     0 0 180px 70px color-mix(in srgb, var(--sch-sun) 22%, transparent);
   opacity: var(--sch-sun-o);
-  mix-blend-mode: screen;
-  transition:
-    left 2s var(--sch-ease),
-    top 2s var(--sch-ease);
+  will-change: transform;
+  transition: transform 2s var(--sch-ease);
 }
 
 .sch-moon {
@@ -344,7 +358,6 @@
 .sch-beams {
   position: absolute;
   inset: 0;
-  mix-blend-mode: screen;
 }
 .sch-beams span {
   position: absolute;
@@ -389,6 +402,7 @@
   filter: drop-shadow(0 10px 30px rgba(120, 40, 90, 0.25));
   transform-origin: 50% 100%;
   animation: sch-sway 9s ease-in-out infinite alternate;
+  will-change: transform;
   transition:
     filter 1.8s var(--sch-ease),
     opacity 1.8s var(--sch-ease);
@@ -1016,6 +1030,7 @@
   mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
 }
 .sch-marquee__track {
+  will-change: transform;
   display: flex;
   width: max-content;
   animation: sch-marquee 30s linear infinite;
@@ -1344,6 +1359,7 @@
     radial-gradient(60cqw 50cqh at 50% 85%, rgba(207, 79, 141, 0.55), transparent 70%),
     radial-gradient(50cqw 40cqh at 18% 20%, rgba(122, 86, 163, 0.5), transparent 70%),
     radial-gradient(40cqw 40cqh at 85% 25%, rgba(96, 140, 255, 0.3), transparent 70%);
+  will-change: transform, opacity;
   animation: art-breathe 6s ease-in-out infinite alternate;
 }
 @keyframes art-breathe {
@@ -1355,11 +1371,6 @@
 @keyframes art-rot {
   to {
     rotate: 360deg;
-  }
-}
-@keyframes art-rot-t {
-  to {
-    transform: rotate(360deg);
   }
 }
 @keyframes art-blink {
@@ -1383,7 +1394,7 @@
   rotate: var(--a);
   background: linear-gradient(0deg, var(--c), transparent 85%);
   filter: drop-shadow(0 0 6px var(--c));
-  mix-blend-mode: screen;
+  will-change: transform, opacity;
   animation: art-laser 4s ease-in-out infinite alternate;
 }
 @keyframes art-laser {
@@ -1471,15 +1482,23 @@
   top: 14%;
   width: 100%;
   height: 50%;
-  overflow: visible;
+  overflow: hidden;
 }
-.art-waves path {
+/* each wave is twice the card wide and slides by half: a seamless loop on the GPU */
+.art-waves svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  overflow: visible;
   filter: drop-shadow(0 0 3px #b79cff);
+  will-change: transform;
   animation: art-wave linear infinite;
 }
 @keyframes art-wave {
   to {
-    transform: translateX(-100px);
+    transform: translateX(-50%);
   }
 }
 .art-amps {
@@ -1565,12 +1584,18 @@
   width: min(95cqw, 95cqh);
   aspect-ratio: 1;
   translate: -50% -50%;
-  filter: drop-shadow(0 0 8px rgba(246, 169, 200, 0.55));
+}
+.art-mandala svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 .art-spin {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: art-rot-t 40s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(246, 169, 200, 0.55));
+  will-change: transform;
+  animation: art-rot 40s linear infinite;
 }
 .art-spin--slow {
   animation-duration: 60s;
@@ -1582,9 +1607,15 @@
 .art-spin--fast {
   animation-duration: 12s;
 }
-.art-bell {
-  fill: #ffd27f;
-  animation: art-blink 1.6s ease-in-out infinite alternate;
+.art-bells {
+  animation:
+    art-rot 28s linear infinite reverse,
+    art-blink 1.6s ease-in-out infinite alternate;
+}
+.art-bells--1 {
+  animation-delay:
+    0s,
+    -0.8s;
 }
 
 /* Folk: Sikkim hills, prayer flags, rising notes */
@@ -1677,7 +1708,7 @@
   );
   clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
   filter: blur(4px);
-  mix-blend-mode: screen;
+  will-change: opacity;
   animation: art-blink 3s ease-in-out infinite alternate;
 }
 .art-track {
@@ -1696,10 +1727,14 @@
     rgba(255, 240, 246, 0.5)
   );
   border-inline: 2px solid rgba(255, 220, 235, 0.6);
+  overflow: hidden;
 }
+/* one dash-period taller than the track and slid down by it, instead of animating
+   background-position (which repaints every frame) */
 .art-track__lights {
   position: absolute;
-  inset: 0;
+  inset: -22px 0 0;
+  will-change: transform;
   background-image:
     repeating-linear-gradient(180deg, transparent 0 18px, #fff 18px 22px),
     repeating-linear-gradient(180deg, transparent 0 18px, #fff 18px 22px);
@@ -1713,9 +1748,7 @@
 }
 @keyframes art-runlights {
   to {
-    background-position:
-      left 6px top 22px,
-      right 6px top 22px;
+    transform: translateY(22px);
   }
 }
 .art-flashes span {
@@ -1797,17 +1830,24 @@
   height: 38%;
   transform: perspective(200px) rotateX(55deg);
   transform-origin: 50% 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 40%);
+  mask-image: linear-gradient(180deg, transparent, #000 40%);
+}
+.art-grid::before {
+  content: "";
+  position: absolute;
+  inset: -40px 0 0;
   background-image:
     linear-gradient(rgba(246, 169, 200, 0.75) 1px, transparent 1px),
     linear-gradient(90deg, rgba(183, 156, 255, 0.6) 1px, transparent 1px);
   background-size: 40px 40px;
-  -webkit-mask-image: linear-gradient(180deg, transparent, #000 40%);
-  mask-image: linear-gradient(180deg, transparent, #000 40%);
+  will-change: transform;
   animation: art-gridmove 1.4s linear infinite;
 }
 @keyframes art-gridmove {
   to {
-    background-position: 0 40px;
+    transform: translateY(40px);
   }
 }
 .art-deck {
@@ -1894,4 +1934,68 @@
   background: linear-gradient(0deg, #7a56a3, #cf4f8d 50%, #ffd0e2);
   transform-origin: bottom;
   animation: sch-eq 0.7s ease-in-out infinite alternate;
+}
+
+/* ── Performance ─────────────────────────────────────────────────────
+   Layers that are invisible in daylight stop animating, off-screen
+   night art pauses, and touch devices drop the live glass blur (it
+   re-blurs the moving sky behind every card on every frame) in favour
+   of slightly denser cards that look the same at a glance. */
+.sch-flies span,
+.sch-petals span,
+.sch-beams span,
+.art-confetti span,
+.art-flags span,
+.art-notes span,
+.art-flashes span,
+.art-rings span,
+.art-vinyl,
+.art-amp__woofer,
+.art-eq i,
+.sch-eq i {
+  will-change: transform;
+}
+.sch[data-period="morning"] :is(.sch-stars, .sch-flies),
+.sch[data-period="afternoon"] :is(.sch-stars, .sch-flies) {
+  visibility: hidden;
+  transition: visibility 0s var(--sch-dur);
+}
+.sch[data-period="morning"] :is(.sch-stars, .sch-flies) *,
+.sch[data-period="afternoon"] :is(.sch-stars, .sch-flies) * {
+  animation-play-state: paused;
+}
+.sch-act__media.is-paused *,
+.sch-act__media.is-paused *::before,
+.sch-act__media.is-paused *::after {
+  animation-play-state: paused !important;
+}
+.sch-act {
+  contain: paint;
+}
+
+@media (hover: none), (max-width: 768px) {
+  .sch *,
+  .sch *::before {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  .sch[data-period="morning"] {
+    --sch-card: rgba(255, 248, 251, 0.84);
+  }
+  .sch[data-period="afternoon"] {
+    --sch-card: rgba(255, 252, 254, 0.86);
+  }
+  .sch[data-period="evening"] {
+    --sch-card: rgba(74, 30, 70, 0.82);
+  }
+  .sch[data-period="night"] {
+    --sch-card: rgba(30, 17, 52, 0.86);
+  }
+  .sch-act__tag {
+    background: rgba(60, 26, 70, 0.7);
+  }
+  /* half the petals, same look */
+  .sch-petals span:nth-child(2n) {
+    display: none;
+  }
 }

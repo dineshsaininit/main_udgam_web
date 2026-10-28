@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { memo, type CSSProperties } from "react";
 
 import type { NightArt as NightArtKind } from "./scheduleData";
 
@@ -10,7 +10,7 @@ import type { NightArt as NightArtKind } from "./scheduleData";
 const prng = (seed: number) => () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const v = (vars: Record<string, string | number>) => vars as CSSProperties;
 
-export function NightArt({ kind }: { kind: NightArtKind }) {
+export const NightArt = memo(function NightArt({ kind }: { kind: NightArtKind }) {
   switch (kind) {
     case "concert":
       return <Concert />;
@@ -25,7 +25,7 @@ export function NightArt({ kind }: { kind: NightArtKind }) {
     case "dj":
       return <Dj />;
   }
-}
+});
 
 const LASER_COLORS = ["#f6a9c8", "#b79cff", "#9fdcff", "#ff7fb0"];
 const r1 = prng(7);
@@ -94,29 +94,36 @@ function Band() {
   return (
     <div className="art art-band" aria-hidden>
       <div className="art-haze" />
-      <svg className="art-waves" viewBox="0 0 200 100" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="art-wave-g" x1="0" x2="1">
-            <stop offset="0" stopColor="#9fdcff" />
-            <stop offset="0.5" stopColor="#b79cff" />
-            <stop offset="1" stopColor="#f6a9c8" />
-          </linearGradient>
-        </defs>
+      <div className="art-waves">
         {[
-          [18, 50, 1.6],
-          [10, 50, 1],
-          [26, 50, 0.6],
-        ].map(([amp, mid, w], i) => (
-          <path
+          [18, 1.6],
+          [10, 1],
+          [26, 0.6],
+        ].map(([amp, w], i) => (
+          <svg
             key={i}
-            d={wave(amp!, mid!)}
-            stroke="url(#art-wave-g)"
-            strokeWidth={w}
-            fill="none"
+            viewBox="0 0 400 100"
+            preserveAspectRatio="none"
             style={{ animationDuration: `${3 + i * 1.3}s`, opacity: 1 - i * 0.25 }}
-          />
+          >
+            <defs>
+              {/* reflected every 200 units, so the 200-unit scroll loops without a colour jump */}
+              <linearGradient
+                id={`art-wave-g${i}`}
+                gradientUnits="userSpaceOnUse"
+                x1="0"
+                x2="100"
+                spreadMethod="reflect"
+              >
+                <stop offset="0" stopColor="#9fdcff" />
+                <stop offset="0.5" stopColor="#b79cff" />
+                <stop offset="1" stopColor="#f6a9c8" />
+              </linearGradient>
+            </defs>
+            <path d={wave(amp!, 50)} stroke={`url(#art-wave-g${i})`} strokeWidth={w} fill="none" />
+          </svg>
         ))}
-      </svg>
+      </div>
       <div className="art-amps">
         {[0, 1].map((i) => (
           <div key={i} className="art-amp">
@@ -140,56 +147,54 @@ function Kathak() {
   return (
     <div className="art art-kathak" aria-hidden>
       <div className="art-haze" />
-      <svg className="art-mandala" viewBox="-100 -100 200 200">
-        <defs>
-          <radialGradient id="art-core-g">
-            <stop offset="0" stopColor="#fff4f8" />
-            <stop offset="0.5" stopColor="#ffc3d9" />
-            <stop offset="1" stopColor="#cf4f8d" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        <g
-          className="art-spin art-spin--slow"
-          fill="none"
-          stroke="#ffd27f"
-          strokeWidth="0.8"
-          opacity="0.85"
-        >
-          {petalRing(16, 70, 9, 22)}
-        </g>
-        <g
-          className="art-spin art-spin--rev"
-          fill="rgba(246,169,200,0.22)"
-          stroke="#f6a9c8"
-          strokeWidth="0.9"
-        >
-          {petalRing(12, 46, 9, 18)}
-        </g>
-        <g
-          className="art-spin art-spin--fast"
-          fill="rgba(183,156,255,0.3)"
-          stroke="#d8c8ff"
-          strokeWidth="0.8"
-        >
-          {petalRing(8, 24, 7, 13)}
-        </g>
-        <g className="art-spin art-spin--rev">
-          {Array.from({ length: 28 }, (_, i) => {
-            const a = (Math.PI * 2 * i) / 28;
-            return (
-              <circle
-                key={i}
-                className="art-bell"
-                cx={(Math.cos(a) * 92).toFixed(2)}
-                cy={(Math.sin(a) * 92).toFixed(2)}
-                r="2.4"
-                style={{ animationDelay: `${(i % 7) * -0.3}s` }}
-              />
-            );
-          })}
-        </g>
-        <circle r="16" fill="url(#art-core-g)" />
-      </svg>
+      <div className="art-mandala">
+        <svg viewBox="-100 -100 200 200" className="art-spin art-spin--slow">
+          <g fill="none" stroke="#ffd27f" strokeWidth="0.8" opacity="0.85">
+            {petalRing(16, 70, 9, 22)}
+          </g>
+        </svg>
+        <svg viewBox="-100 -100 200 200" className="art-spin art-spin--rev">
+          <g fill="rgba(246,169,200,0.22)" stroke="#f6a9c8" strokeWidth="0.9">
+            {petalRing(12, 46, 9, 18)}
+          </g>
+        </svg>
+        <svg viewBox="-100 -100 200 200" className="art-spin art-spin--fast">
+          <g fill="rgba(183,156,255,0.3)" stroke="#d8c8ff" strokeWidth="0.8">
+            {petalRing(8, 24, 7, 13)}
+          </g>
+        </svg>
+        {/* alternate bells shimmer in two sets, each fading as a whole layer */}
+        {[0, 1].map((set) => (
+          <svg
+            key={set}
+            viewBox="-100 -100 200 200"
+            className={`art-spin art-bells art-bells--${set}`}
+          >
+            {Array.from({ length: 14 }, (_, k) => {
+              const a = (Math.PI * 2 * (k * 2 + set)) / 28;
+              return (
+                <circle
+                  key={k}
+                  cx={(Math.cos(a) * 92).toFixed(2)}
+                  cy={(Math.sin(a) * 92).toFixed(2)}
+                  r="2.4"
+                  fill="#ffd27f"
+                />
+              );
+            })}
+          </svg>
+        ))}
+        <svg viewBox="-100 -100 200 200">
+          <defs>
+            <radialGradient id="art-core-g">
+              <stop offset="0" stopColor="#fff4f8" />
+              <stop offset="0.5" stopColor="#ffc3d9" />
+              <stop offset="1" stopColor="#cf4f8d" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <circle r="16" fill="url(#art-core-g)" />
+        </svg>
+      </div>
     </div>
   );
 }
