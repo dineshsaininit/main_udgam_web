@@ -102,6 +102,7 @@ export const EVENTS: FestEvent[] = [
     category: "performance",
     fee: 0,
     teamSize: { min: 1, max: 1 },
+    registrationClosed: true,
     description: "Ramp walk with different traditions.",
     taglines: [
       "Threads of tradition, steps of grace!",
