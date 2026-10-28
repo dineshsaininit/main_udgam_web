@@ -28,6 +28,7 @@ export const DAY_SCHEDULE: Record<number, ScheduleEvent[]> = {
   0: [
     { name: "Wall Painting", start: "14:00", end: "17:30", venue: "Campus" },
     { name: "BGMI", start: "14:00", end: "17:00", venue: "Shed 2" },
+    { name: "Real Cricket", start: "16:00", end: "17:00", venue: "Shed 2" },
     { name: "Food Fiesta", start: "14:00", end: "17:00", venue: "Girls' Mess + Civil Dept." },
     { name: "Housie Bingo", start: "17:00", end: "18:00", venue: "Basketball Ground" },
     { name: "Singing Competition", start: "17:00", end: "18:15", venue: "MPH" },
@@ -38,6 +39,7 @@ export const DAY_SCHEDULE: Record<number, ScheduleEvent[]> = {
   1: [
     { name: "Rangoli", start: "09:00", end: "10:30", venue: "Campus" },
     { name: "BGMI", start: "09:00", end: "12:00", venue: "MPH" },
+    { name: "Real Cricket", start: "11:00", end: "12:00", venue: "MPH" },
     { name: "E-Football", start: "09:00", end: "10:30", venue: "Shed 2" },
     { name: "Balloon Burst", start: "11:00", end: "12:15", venue: "Basketball Ground" },
     { name: "Three Leg Tie", start: "12:15", end: "13:30", venue: "Basketball Ground" },
