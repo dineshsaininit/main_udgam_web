@@ -86,6 +86,16 @@ export const sponsors = [
       "Official food partner for Udgam 2K26 — keeping the fest fuelled with hot pizza, sides, and refreshments.",
   },
   {
+    id: "the-waffle-stop",
+    name: "The Waffle Stop",
+    categoryId: "food",
+    tier: "food",
+    logo: "/assets/sponsors/waffle_stop_logo.png",
+    website: "",
+    description:
+      "Official food partner for Udgam 2K26 — choc-full of waffle goodness.",
+  },
+  {
     id: "union-bank",
     name: "Union Bank of India",
     categoryId: "cash",
@@ -155,6 +165,7 @@ export const tierConfig: Record<string, { label: string; color: string; order: n
   silver: { label: "Silver Sponsor", color: "#C0C0C0", order: 4 },
   bronze: { label: "Bronze Sponsor", color: "#CD7F32", order: 5 },
   cash: { label: "Cash Sponsor", color: "#10B981", order: 6 },
+  food: { label: "Food Partner", color: "#F97316", order: 7 },
 };
 
 export const getSponsors = createServerFn({ method: "GET" }).handler(async () => ({

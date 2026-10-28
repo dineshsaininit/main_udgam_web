@@ -13,11 +13,18 @@ const TALL_LOGOS = new Set(["dominos"]);
 
 function SponsorTile({ sponsor, hidden }: { sponsor: Sponsor; hidden?: boolean }) {
   const tier = tierConfig[sponsor.tier];
+  const hasLink = Boolean(sponsor.website && sponsor.website.trim() !== "");
+  const Tag = hasLink ? "a" : "div";
+
   return (
-    <a
-      href={sponsor.website}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Tag
+      {...(hasLink
+        ? {
+            href: sponsor.website,
+            target: "_blank",
+            rel: "noopener noreferrer",
+          }
+        : {})}
       aria-hidden={hidden || undefined}
       tabIndex={hidden ? -1 : undefined}
       className="sponsor-tile group flex h-[120px] w-[210px] shrink-0 flex-col items-center justify-center gap-2 rounded-2xl border border-white/70 bg-white/90 px-5 shadow-[0_8px_30px_rgba(216,27,75,0.12)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_14px_40px_rgba(216,27,75,0.28)] sm:w-[240px]"
@@ -35,7 +42,7 @@ function SponsorTile({ sponsor, hidden }: { sponsor: Sponsor; hidden?: boolean }
         />
         {tier?.label ?? "Partner"}
       </span>
-    </a>
+    </Tag>
   );
 }
 
