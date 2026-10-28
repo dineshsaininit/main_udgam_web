@@ -83,6 +83,7 @@ export default function EventsPage({
   const searchRef = useRef<HTMLInputElement>(null);
 
   const handleRegister = (target: FestEvent) => {
+    if (target.registrationClosed && !registered[target.id]) return;
     if (target.registerUrl) {
       window.location.href = target.registerUrl;
       return;
@@ -449,6 +450,7 @@ function HeadlinerTile({
           onRegister={onRegister}
           eventName={event.name}
           href={event.registerUrl}
+          closed={!!event.registrationClosed}
         />
         <button
           type="button"
@@ -512,6 +514,7 @@ function TicketCard({ event, registered, onRegister, onOpen, onOpenRulebook }: C
             eventName={event.name}
             size="sm"
             href={event.registerUrl}
+            closed={!!event.registrationClosed}
           />
           <button
             type="button"

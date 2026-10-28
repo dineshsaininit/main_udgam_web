@@ -14,9 +14,21 @@ describe("event rules match the website", () => {
       const be = EVENTS.find((e) => e.id === fe.id);
       expect(be, fe.id).toBeDefined();
       expect(
-        { name: be?.name, fee: be?.fee, feeUnit: be?.feeUnit, teamSize: be?.teamSize },
+        {
+          name: be?.name,
+          fee: be?.fee,
+          feeUnit: be?.feeUnit,
+          teamSize: be?.teamSize,
+          registrationClosed: be?.registrationClosed ?? false,
+        },
         fe.id,
-      ).toEqual({ name: fe.name, fee: fe.fee, feeUnit: fe.feeUnit ?? null, teamSize: fe.teamSize });
+      ).toEqual({
+        name: fe.name,
+        fee: fe.fee,
+        feeUnit: fe.feeUnit ?? null,
+        teamSize: fe.teamSize,
+        registrationClosed: fe.registrationClosed ?? false,
+      });
     }
   });
 });

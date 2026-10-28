@@ -34,6 +34,8 @@ export interface FestEvent {
   rulebookPdf?: string;
   /** external URL to redirect when user clicks register */
   registerUrl?: string;
+  /** organisers have stopped taking registrations; the site shows "Registration closed" */
+  registrationClosed?: boolean;
 }
 
 export const EVENT_CATEGORIES: EventCategory[] = [
@@ -69,6 +71,7 @@ export const EVENTS: FestEvent[] = [
     fee: 100,
     feeUnit: "team",
     teamSize: { min: 3, max: 3 },
+    registrationClosed: true,
     taglines: [
       "Follow the clues. Find the glory.",
       "X marks the spot. Who finds it first?",
@@ -128,6 +131,7 @@ export const EVENTS: FestEvent[] = [
     category: "performance",
     fee: 0,
     teamSize: { min: 1, max: 7 },
+    registrationClosed: true,
     description: "The winner of the dance competition gets to perform on the Udgam stage.",
     taglines: [
       "Steal the floor, own the stage!",
@@ -154,6 +158,7 @@ export const EVENTS: FestEvent[] = [
     category: "performance",
     fee: 0,
     teamSize: { min: 1, max: 7 },
+    registrationClosed: true,
     taglines: ["Sing your heart out. Touch the soul.", "Amplify your voice. Electrify the crowd."],
     docUrl: DOC("1e5-mq9BAFEiCco7V1LSZt8cZ7-1HGBvsz1WJbWh3xtk", "edit?usp=drivesdk"),
     rulebookPdf: "/rulebooks/singing-competition.pdf",
@@ -326,7 +331,7 @@ export const EVENTS: FestEvent[] = [
     name: "Guess the Juice",
     tier: "regular",
     category: "food",
-    fee: 50,
+    fee: 20,
     feeUnit: "person",
     teamSize: { min: 1, max: 1 },
     taglines: [

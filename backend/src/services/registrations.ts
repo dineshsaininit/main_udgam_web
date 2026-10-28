@@ -74,6 +74,14 @@ export async function startRegistration(raw: unknown): Promise<StartRegistration
     };
   }
 
+  if (event.registrationClosed) {
+    return {
+      ok: false,
+      code: "closed",
+      message: `Registration for ${event.name} is closed.`,
+    };
+  }
+
   if (event.fee === null) {
     return {
       ok: false,

@@ -14,17 +14,19 @@ export interface EventRule {
   feeUnit: "team" | "person" | null;
   /** allowed participants per registration, INCLUDING the team leader */
   teamSize: { min: number; max: number };
+  /** organisers stopped taking registrations -> registration refused */
+  registrationClosed?: boolean;
 }
 
 export const EVENTS: readonly EventRule[] = [
   { id: "spoil-the-tshirt", name: "Spoil the T-shirt", tier: "major", fee: 150, feeUnit: "team", teamSize: { min: 3, max: 3 } },
-  { id: "treasure-hunt", name: "Treasure Hunt", tier: "major", fee: 100, feeUnit: "team", teamSize: { min: 3, max: 3 } },
+  { id: "treasure-hunt", name: "Treasure Hunt", tier: "major", fee: 100, feeUnit: "team", teamSize: { min: 3, max: 3 }, registrationClosed: true },
   { id: "ipl-auction", name: "IPL Auction", tier: "major", fee: 200, feeUnit: "team", teamSize: { min: 4, max: 6 } },
   { id: "ramp-walk", name: "Ramp Walk", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 } },
   { id: "housie", name: "Housie (Bingo)", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 } },
-  { id: "dance-competition", name: "Dance Competition", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 7 } },
+  { id: "dance-competition", name: "Dance Competition", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 7 }, registrationClosed: true },
   { id: "food-fiesta", name: "Food Fiesta", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 3, max: 5 } },
-  { id: "singing-competition", name: "Singing Competition", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 7 } },
+  { id: "singing-competition", name: "Singing Competition", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 7 }, registrationClosed: true },
   { id: "wall-painting", name: "Wall Painting", tier: "major", fee: 200, feeUnit: "team", teamSize: { min: 1, max: 5 } },
   { id: "dumb-charades", name: "Dumb Charades", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 4, max: 4 } },
   { id: "antakshari", name: "Antakshari", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 5, max: 5 } },
@@ -35,7 +37,7 @@ export const EVENTS: readonly EventRule[] = [
   { id: "real-cricket", name: "Real Cricket", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 } },
   { id: "mlbb", name: "MLBB", tier: "regular", fee: 200, feeUnit: "team", teamSize: { min: 5, max: 6 } },
   { id: "efootball", name: "eFootball", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 } },
-  { id: "guess-the-juice", name: "Guess the Juice", tier: "regular", fee: 50, feeUnit: "person", teamSize: { min: 1, max: 1 } },
+  { id: "guess-the-juice", name: "Guess the Juice", tier: "regular", fee: 20, feeUnit: "person", teamSize: { min: 1, max: 1 } },
   { id: "three-leg-tie", name: "Three-Leg Tie", tier: "regular", fee: 30, feeUnit: "team", teamSize: { min: 2, max: 2 } },
   { id: "musical-chair", name: "Musical Chair", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 } },
   { id: "rangoli", name: "Rangoli", tier: "regular", fee: 80, feeUnit: "team", teamSize: { min: 4, max: 4 } },

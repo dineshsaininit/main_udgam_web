@@ -361,6 +361,7 @@ export default function EventDrawer({
                 eventName={shown.name}
                 size="lg"
                 href={shown.registerUrl}
+                closed={!!shown.registrationClosed}
               />
             </div>
           </div>

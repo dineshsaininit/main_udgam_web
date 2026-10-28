@@ -151,6 +151,14 @@ describe("registration service", () => {
     expect(dbCalls).toHaveLength(0);
   });
 
+  it("refuses events whose registration has been closed", async () => {
+    const { startRegistration } = await import("../src/services/registrations");
+    const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
+    const r = await startRegistration(input("treasure-hunt", m));
+    expect(r).toMatchObject({ ok: false, code: "closed" });
+    expect(dbCalls).toHaveLength(0);
+  });
+
   it("rejects wrong team size before touching the database", async () => {
     const { startRegistration } = await import("../src/services/registrations");
     const r = await startRegistration(input("rangoli", [{ name: "Bina", rollNo: "B23X02" }]));
@@ -205,7 +213,7 @@ describe("registration service", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     const { startRegistration } = await import("../src/services/registrations");
     const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
-    const r = await startRegistration(input("treasure-hunt", m));
+    const r = await startRegistration(input("spoil-the-tshirt", m));
     expect(r).toMatchObject({ ok: false, code: "error" });
     expect(dbCalls.some((q) => q.includes("udgam_cancel_pending"))).toBe(true);
   });
@@ -220,20 +228,20 @@ describe("registration service", () => {
           : [];
     createOrder.mockResolvedValue({
       id: "order_ABC123",
-      amount: 10000,
+      amount: 15000,
       currency: "INR",
       status: "created",
     });
     const { startRegistration } = await import("../src/services/registrations");
     const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
-    const r = await startRegistration({ ...input("treasure-hunt", m), amount: 1 } as never); // client "amount" ignored
+    const r = await startRegistration({ ...input("spoil-the-tshirt", m), amount: 1 } as never); // client "amount" ignored
     expect(createOrder).toHaveBeenCalledWith(
-      expect.objectContaining({ amountPaise: 10000, receipt: id }),
+      expect.objectContaining({ amountPaise: 15000, receipt: id }),
     );
     expect(r).toMatchObject({
       ok: true,
       status: "payment_required",
-      order: { id: "order_ABC123", amount: 10000 },
+      order: { id: "order_ABC123", amount: 15000 },
     });
     expect(dbCalls.some((q) => q.includes("UPDATE registrations"))).toBe(true);
   });
@@ -248,7 +256,7 @@ describe("registration service", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     const { startRegistration } = await import("../src/services/registrations");
     const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
-    const r = await startRegistration(input("treasure-hunt", m));
+    const r = await startRegistration(input("spoil-the-tshirt", m));
     expect(r).toMatchObject({ ok: false, code: "error" });
     expect(dbCalls.some((q) => q.includes("udgam_cancel_pending"))).toBe(true);
   });

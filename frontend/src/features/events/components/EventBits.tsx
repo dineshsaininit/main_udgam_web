@@ -57,13 +57,30 @@ export function RegisterButton({
   eventName,
   size = "md",
   href,
+  closed = false,
 }: {
   registered: boolean;
   onRegister: () => void;
   eventName: string;
   size?: "sm" | "md" | "lg";
   href?: string;
+  /** registrations stopped; people who already registered can still open their receipt */
+  closed?: boolean;
 }) {
+  if (closed && !registered) {
+    return (
+      <button
+        type="button"
+        className={`ep-register is-closed is-${size}`}
+        aria-label={`Registration for ${eventName} is closed`}
+        disabled
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span>Registration closed</span>
+      </button>
+    );
+  }
+
   if (href && !registered) {
     return (
       <a
