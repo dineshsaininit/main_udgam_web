@@ -99,7 +99,7 @@ export const NIGHT_HIGHLIGHTS: NightHighlight[] = [
     art: "concert",
   },
   {
-    name: "The Mirroz",
+    name: "Mirrorz",
     tag: "Live Band",
     blurb: "A full band on the main stage: big riffs, bigger choruses.",
     art: "band",
