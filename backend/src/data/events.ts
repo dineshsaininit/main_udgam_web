@@ -26,7 +26,7 @@ export const EVENTS: readonly EventRule[] = [
   { id: "housie", name: "Housie (Bingo)", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 } },
   { id: "dance-competition", name: "Dance Competition", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 7 }, registrationClosed: true },
   { id: "food-fiesta", name: "Food Fiesta", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 3, max: 5 } },
-  { id: "singing-competition", name: "Singing Competition", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 7 } },
+  { id: "singing-competition", name: "Singing Competition", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 7 }, registrationClosed: true },
   { id: "wall-painting", name: "Wall Painting", tier: "major", fee: 200, feeUnit: "team", teamSize: { min: 1, max: 5 } },
   { id: "dumb-charades", name: "Dumb Charades", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 4, max: 4 } },
   { id: "antakshari", name: "Antakshari", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 5, max: 5 } },
