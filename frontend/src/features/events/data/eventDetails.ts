@@ -117,6 +117,7 @@ export const EVENTS: FestEvent[] = [
     category: "games",
     fee: 0,
     teamSize: { min: 1, max: 1 },
+    registrationClosed: true,
     taglines: [
       "Mark, match, shout — it's Housie time!",
       "One ticket, endless thrill!",
@@ -148,6 +149,7 @@ export const EVENTS: FestEvent[] = [
     category: "food",
     fee: 0,
     teamSize: { min: 3, max: 5 },
+    registrationClosed: true,
     description: "Cook-off for food makers. The winner gets to run a stall during Udgam.",
     taglines: ["One fest. Endless flavors.", "Come hungry. Leave happy."],
     rulebookPdf: "/rulebooks/food-fiesta.pdf",
@@ -172,6 +174,7 @@ export const EVENTS: FestEvent[] = [
     fee: 200,
     feeUnit: "team",
     teamSize: { min: 1, max: 5 },
+    registrationClosed: true,
     taglines: ["Walls that speak, art that screams.", "Give your thoughts a splash of freedom."],
     docUrl: DOC("137-WU42Cb8S25cM8u-Iw7xFDLUh1RPUYhkLTkE2LrbQ", "edit?usp=drivesdk"),
     rulebookPdf: "/rulebooks/wall-painting.pdf",
@@ -254,6 +257,7 @@ export const EVENTS: FestEvent[] = [
     category: "esports",
     fee: 0,
     teamSize: { min: 4, max: 4 },
+    registrationClosed: true,
     partner: "Unstop",
     taglines: ["Drop, loot, survive — Booyah or bust!", "One zone, one winner — are you ready?"],
     description:
@@ -269,6 +273,7 @@ export const EVENTS: FestEvent[] = [
     category: "esports",
     fee: 0,
     teamSize: { min: 4, max: 4 },
+    registrationClosed: true,
     prizePool: "₹12,000",
     partner: "Krafton",
     taglines: [
@@ -286,6 +291,7 @@ export const EVENTS: FestEvent[] = [
     category: "esports",
     fee: 0,
     teamSize: { min: 1, max: 1 },
+    registrationClosed: true,
     prizePool: "₹3,000",
     partner: "Krafton",
     taglines: [
@@ -304,6 +310,7 @@ export const EVENTS: FestEvent[] = [
     fee: 200,
     feeUnit: "team",
     teamSize: { min: 5, max: 6 },
+    registrationClosed: true,
     taglines: [
       "Legends aren't born — they're made in the arena!",
       "Five heroes, one goal — total annihilation!",

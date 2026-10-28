@@ -73,10 +73,11 @@ export function RegisterButton({
         type="button"
         className={`ep-register is-closed is-${size}`}
         aria-label={`Registration for ${eventName} is closed`}
+        title={`Registration for ${eventName} is closed`}
         disabled
         onClick={(e) => e.stopPropagation()}
       >
-        <span>Registration closed</span>
+        <span>{size === "lg" ? "Registration closed" : "Closed"}</span>
       </button>
     );
   }
