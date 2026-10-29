@@ -161,7 +161,7 @@ describe("registration service", () => {
 
   it("rejects wrong team size before touching the database", async () => {
     const { startRegistration } = await import("../src/services/registrations");
-    const r = await startRegistration(input("rangoli", [{ name: "Bina", rollNo: "B23X02" }]));
+    const r = await startRegistration(input("dumb-charades", [{ name: "Bina", rollNo: "B23X02" }]));
     expect(r).toMatchObject({ ok: false, code: "invalid" });
     expect(dbCalls).toHaveLength(0);
   });
@@ -189,7 +189,7 @@ describe("registration service", () => {
       },
     ];
     const { startRegistration } = await import("../src/services/registrations");
-    const r = await startRegistration(input("three-leg-tie", [{ name: "Bina", rollNo: "b23x02" }]));
+    const r = await startRegistration(input("balloon-pair-race", [{ name: "Bina", rollNo: "b23x02" }]));
     expect(r).toMatchObject({
       ok: false,
       code: "conflict",
@@ -213,7 +213,7 @@ describe("registration service", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     const { startRegistration } = await import("../src/services/registrations");
     const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
-    const r = await startRegistration(input("spoil-the-tshirt", m));
+    const r = await startRegistration(input("squid-games"));
     expect(r).toMatchObject({ ok: false, code: "error" });
     expect(dbCalls.some((q) => q.includes("udgam_cancel_pending"))).toBe(true);
   });
@@ -228,20 +228,20 @@ describe("registration service", () => {
           : [];
     createOrder.mockResolvedValue({
       id: "order_ABC123",
-      amount: 15000,
+      amount: 3000,
       currency: "INR",
       status: "created",
     });
     const { startRegistration } = await import("../src/services/registrations");
     const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
-    const r = await startRegistration({ ...input("spoil-the-tshirt", m), amount: 1 } as never); // client "amount" ignored
+    const r = await startRegistration({ ...input("squid-games"), amount: 1 } as never); // client "amount" ignored
     expect(createOrder).toHaveBeenCalledWith(
-      expect.objectContaining({ amountPaise: 15000, receipt: id }),
+      expect.objectContaining({ amountPaise: 3000, receipt: id }),
     );
     expect(r).toMatchObject({
       ok: true,
       status: "payment_required",
-      order: { id: "order_ABC123", amount: 15000 },
+      order: { id: "order_ABC123", amount: 3000 },
     });
     expect(dbCalls.some((q) => q.includes("UPDATE registrations"))).toBe(true);
   });
@@ -256,7 +256,7 @@ describe("registration service", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     const { startRegistration } = await import("../src/services/registrations");
     const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
-    const r = await startRegistration(input("spoil-the-tshirt", m));
+    const r = await startRegistration(input("squid-games"));
     expect(r).toMatchObject({ ok: false, code: "error" });
     expect(dbCalls.some((q) => q.includes("udgam_cancel_pending"))).toBe(true);
   });

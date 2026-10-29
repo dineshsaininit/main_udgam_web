@@ -59,6 +59,7 @@ export const EVENTS: FestEvent[] = [
     fee: 150,
     feeUnit: "team",
     teamSize: { min: 3, max: 3 },
+    registrationClosed: true,
     taglines: [],
     docUrl: DOC("1B7N4-QUDR-qa8jM9BscvCeTci3eNen6rC4VW0rTIWqo", "edit?usp=sharing"),
     rulebookPdf: "/rulebooks/spoil-the-tshirt.pdf",
@@ -221,6 +222,7 @@ export const EVENTS: FestEvent[] = [
     fee: 30,
     feeUnit: "team",
     teamSize: { min: 2, max: 2 },
+    registrationClosed: true,
     taglines: [
       "A little pressure, a lot of chaos.",
       "Fast hands, sharp moves, one loud finish.",
@@ -325,6 +327,7 @@ export const EVENTS: FestEvent[] = [
     category: "esports",
     fee: 0,
     teamSize: { min: 1, max: 1 },
+    registrationClosed: true,
     partner: "Unstop",
     taglines: [
       "One ball, one dream — kick your way to glory!",
@@ -343,6 +346,7 @@ export const EVENTS: FestEvent[] = [
     fee: 20,
     feeUnit: "person",
     teamSize: { min: 1, max: 1 },
+    registrationClosed: true,
     taglines: [
       "Bet you can't guess this in one sip.",
       "Taste buds vs. blindfold — who wins?",
@@ -365,6 +369,7 @@ export const EVENTS: FestEvent[] = [
     fee: 30,
     feeUnit: "team",
     teamSize: { min: 2, max: 2 },
+    registrationClosed: true,
     taglines: [
       "Three feet, one goal.",
       "Step together, win together.",
@@ -391,6 +396,7 @@ export const EVENTS: FestEvent[] = [
     fee: 80,
     feeUnit: "team",
     teamSize: { min: 4, max: 4 },
+    registrationClosed: true,
     description: "Team up and make a rangoli.",
     taglines: ["Create together, shine together.", "Let your colour shine."],
     rulebookPdf: "/rulebooks/rangoli.pdf",
