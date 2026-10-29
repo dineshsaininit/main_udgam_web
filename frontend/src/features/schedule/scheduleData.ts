@@ -9,6 +9,7 @@ export interface ScheduleEvent {
   start: string;
   end: string;
   venue: string;
+  host?: string;
 }
 
 export interface FestDay {
@@ -23,6 +24,10 @@ export const FEST_DAYS: FestDay[] = [
   { day: 2, date: "2026-10-31" },
   { day: 3, date: "2026-11-01" },
 ];
+
+export const DAY_HOSTS: Record<number, string> = {
+  1: "Mudit Sharma & Anuska Mandal",
+};
 
 export const DAY_SCHEDULE: Record<number, ScheduleEvent[]> = {
   0: [
@@ -50,6 +55,52 @@ export const DAY_SCHEDULE: Record<number, ScheduleEvent[]> = {
       venue: "Basketball + Volleyball Ground",
     },
     { name: "Guess the Juice", start: "15:30", end: "16:30", venue: "Shed 2" },
+    { name: "Gathering at the Venue", start: "16:45", end: "17:00", venue: "Football Ground" },
+    { name: "Arrival of Guests", start: "17:00", end: "17:10", venue: "Football Ground" },
+    {
+      name: "Lamp Lighting & Saraswati Vandana",
+      start: "17:10",
+      end: "17:15",
+      venue: "Football Ground",
+    },
+    {
+      name: "Felicitation of Guest of Honor, Chief Guest, and other guests by Director Sir & Felicitation of Director Sir by DSW",
+      start: "17:15",
+      end: "17:25",
+      venue: "Football Ground",
+    },
+    {
+      name: "Briefing of UDGAM by UDGAM 2K26 President",
+      start: "17:25",
+      end: "17:30",
+      venue: "Football Ground",
+    },
+    {
+      name: "Inaugural Speech by Honorable Director Sir",
+      start: "17:30",
+      end: "17:35",
+      venue: "Football Ground",
+    },
+    {
+      name: "Student Performance 1 - Nim Deeki Sherpa (Yoga Artistic)",
+      start: "17:35",
+      end: "17:40",
+      venue: "Football Ground",
+    },
+    { name: "Pallabi De (Kathak)", start: "17:40", end: "19:40", venue: "Football Ground" },
+    { name: "Speech by Guest of Honor", start: "19:40", end: "19:50", venue: "Football Ground" },
+    {
+      name: "Speech by Honorable Chief Guest",
+      start: "19:50",
+      end: "20:00",
+      venue: "Football Ground",
+    },
+    {
+      name: "Dr. Manoj Rai and Reeyaz Band",
+      start: "20:00",
+      end: "21:30",
+      venue: "Football Ground",
+    },
   ],
   2: [
     {

@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
-import { Clock, MapPin, MoonStar, Music2, Sparkles, Sun, Sunrise, Sunset } from "lucide-react";
+import { Clock, MapPin, Mic, MoonStar, Music2, Sparkles, Sun, Sunrise, Sunset } from "lucide-react";
 import {
   memo,
   useEffect,
@@ -16,6 +16,7 @@ import mountainImg from "@/assets/distant_mountains_sikkim.webp";
 import treeImg from "@/assets/tree1.webp";
 import { NightArt } from "./NightArt";
 import {
+  DAY_HOSTS,
   DAY_SCHEDULE,
   FEST_DAYS,
   NIGHT_HIGHLIGHTS,
@@ -353,6 +354,11 @@ function DayPanel({
             <span>
               <Clock className="sch-icon" /> {formatTime(first)} – {formatTime(last)}
             </span>
+            {DAY_HOSTS[dayNumber] && (
+              <span>
+                <Mic className="sch-icon" /> Host: {DAY_HOSTS[dayNumber]}
+              </span>
+            )}
           </div>
         </div>
       </header>
