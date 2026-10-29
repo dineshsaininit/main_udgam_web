@@ -87,6 +87,7 @@ export const EVENTS: FestEvent[] = [
     fee: 200,
     feeUnit: "team",
     teamSize: { min: 4, max: 6 },
+    registrationClosed: true,
     description: "Auction for IPL teams.",
     taglines: [
       "Every bid counts. Every player matters.",
