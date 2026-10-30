@@ -190,6 +190,7 @@ export const EVENTS: FestEvent[] = [
     category: "games",
     fee: 0,
     teamSize: { min: 4, max: 4 },
+    registrationClosed: true,
     description:
       "Guess the movie name — one player acts while the other guesses. Includes a guess-the-personality round.",
     taglines: [
@@ -239,6 +240,7 @@ export const EVENTS: FestEvent[] = [
     fee: 30,
     feeUnit: "person",
     teamSize: { min: 1, max: 1 },
+    registrationClosed: true,
     description: "Four rounds of survival games.",
     rounds: [
       "Red Light, Green Light",
@@ -420,6 +422,7 @@ export const EVENTS: FestEvent[] = [
     fee: 50,
     feeUnit: "person",
     teamSize: { min: 1, max: 1 },
+    registrationClosed: true,
     description: "Whoever eats the most within the time limit wins.",
     taglines: ["Are you hungry enough to make history?", "Khao aise, ki plate sharma jaye."],
     rulebookPdf: "/rulebooks/food-eating-challenge.pdf",

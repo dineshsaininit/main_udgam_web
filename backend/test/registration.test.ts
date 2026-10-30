@@ -161,7 +161,7 @@ describe("registration service", () => {
 
   it("rejects wrong team size before touching the database", async () => {
     const { startRegistration } = await import("../src/services/registrations");
-    const r = await startRegistration(input("dumb-charades", [{ name: "Bina", rollNo: "B23X02" }]));
+    const r = await startRegistration(input("antakshari", [{ name: "Bina", rollNo: "B23X02" }]));
     expect(r).toMatchObject({ ok: false, code: "invalid" });
     expect(dbCalls).toHaveLength(0);
   });
@@ -213,7 +213,7 @@ describe("registration service", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     const { startRegistration } = await import("../src/services/registrations");
     const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
-    const r = await startRegistration(input("squid-games"));
+    const r = await startRegistration(input("string-maze"));
     expect(r).toMatchObject({ ok: false, code: "error" });
     expect(dbCalls.some((q) => q.includes("udgam_cancel_pending"))).toBe(true);
   });
@@ -234,7 +234,7 @@ describe("registration service", () => {
     });
     const { startRegistration } = await import("../src/services/registrations");
     const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
-    const r = await startRegistration({ ...input("squid-games"), amount: 1 } as never); // client "amount" ignored
+    const r = await startRegistration({ ...input("string-maze"), amount: 1 } as never); // client "amount" ignored
     expect(createOrder).toHaveBeenCalledWith(
       expect.objectContaining({ amountPaise: 3000, receipt: id }),
     );
@@ -256,7 +256,7 @@ describe("registration service", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     const { startRegistration } = await import("../src/services/registrations");
     const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
-    const r = await startRegistration(input("squid-games"));
+    const r = await startRegistration(input("string-maze"));
     expect(r).toMatchObject({ ok: false, code: "error" });
     expect(dbCalls.some((q) => q.includes("udgam_cancel_pending"))).toBe(true);
   });
