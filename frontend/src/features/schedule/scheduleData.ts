@@ -9,7 +9,6 @@ export interface ScheduleEvent {
   start: string;
   end: string;
   venue: string;
-  host?: string;
 }
 
 export interface FestDay {
@@ -24,10 +23,6 @@ export const FEST_DAYS: FestDay[] = [
   { day: 2, date: "2026-10-31" },
   { day: 3, date: "2026-11-01" },
 ];
-
-export const DAY_HOSTS: Record<number, string> = {
-  1: "Mudit Sharma & Anuska Mandal",
-};
 
 export const DAY_SCHEDULE: Record<number, ScheduleEvent[]> = {
   0: [
@@ -55,52 +50,6 @@ export const DAY_SCHEDULE: Record<number, ScheduleEvent[]> = {
       venue: "Basketball + Volleyball Ground",
     },
     { name: "Guess the Juice", start: "15:30", end: "16:30", venue: "Shed 2" },
-    { name: "Gathering at the Venue", start: "16:45", end: "17:00", venue: "Football Ground" },
-    { name: "Arrival of Guests", start: "17:00", end: "17:10", venue: "Football Ground" },
-    {
-      name: "Lamp Lighting & Saraswati Vandana",
-      start: "17:10",
-      end: "17:15",
-      venue: "Football Ground",
-    },
-    {
-      name: "Felicitation of Guest of Honor, Chief Guest, and other guests by Director Sir & Felicitation of Director Sir by DSW",
-      start: "17:15",
-      end: "17:25",
-      venue: "Football Ground",
-    },
-    {
-      name: "Briefing of UDGAM by UDGAM 2K26 President",
-      start: "17:25",
-      end: "17:30",
-      venue: "Football Ground",
-    },
-    {
-      name: "Inaugural Speech by Honorable Director Sir",
-      start: "17:30",
-      end: "17:35",
-      venue: "Football Ground",
-    },
-    {
-      name: "Student Performance 1 - Nim Deeki Sherpa (Yoga Artistic)",
-      start: "17:35",
-      end: "17:40",
-      venue: "Football Ground",
-    },
-    { name: "Pallabi De (Kathak)", start: "17:40", end: "19:40", venue: "Football Ground" },
-    { name: "Speech by Guest of Honor", start: "19:40", end: "19:50", venue: "Football Ground" },
-    {
-      name: "Speech by Honorable Chief Guest",
-      start: "19:50",
-      end: "20:00",
-      venue: "Football Ground",
-    },
-    {
-      name: "Dr. Manoj Rai and Reeyaz Band",
-      start: "20:00",
-      end: "21:30",
-      venue: "Football Ground",
-    },
   ],
   2: [
     {
@@ -130,6 +79,79 @@ export const DAY_SCHEDULE: Record<number, ScheduleEvent[]> = {
   ],
 };
 
+export interface NightProgramme {
+  night: number;
+  /** YYYY-MM-DD */
+  date: string;
+  theme: string;
+  host: string;
+  events: ScheduleEvent[];
+}
+
+// The evening programme of each night, from the "UDGAM 2k26 Night Schedule" sheet. A night
+// gets its own tab under Night (next to Headliners) as soon as it is listed here.
+export const NIGHT_PROGRAMMES: NightProgramme[] = [
+  {
+    night: 1,
+    date: "2026-10-30",
+    theme: "Cultural Night",
+    host: "Mudit Sharma & Anuska Mandal",
+    events: [
+      { name: "Gathering at the Venue", start: "16:45", end: "17:00", venue: "Football Ground" },
+      { name: "Arrival of Guests", start: "17:00", end: "17:10", venue: "Football Ground" },
+      {
+        name: "Lamp Lighting & Saraswati Vandana",
+        start: "17:10",
+        end: "17:15",
+        venue: "Football Ground",
+      },
+      {
+        name: "Felicitation of the Guest of Honour, Chief Guest and guests by Director Sir, and of Director Sir by DSW",
+        start: "17:15",
+        end: "17:25",
+        venue: "Football Ground",
+      },
+      {
+        name: "Briefing of UDGAM by the UDGAM 2K26 President",
+        start: "17:25",
+        end: "17:30",
+        venue: "Football Ground",
+      },
+      {
+        name: "Inaugural Speech by Honourable Director Sir",
+        start: "17:30",
+        end: "17:35",
+        venue: "Football Ground",
+      },
+      {
+        name: "Student Performance: Nim Deeki Sherpa (Yoga Artistic)",
+        start: "17:35",
+        end: "17:40",
+        venue: "Football Ground",
+      },
+      { name: "Pallabi De (Kathak)", start: "17:40", end: "19:40", venue: "Football Ground" },
+      {
+        name: "Speech by the Guest of Honour",
+        start: "19:40",
+        end: "19:50",
+        venue: "Football Ground",
+      },
+      {
+        name: "Speech by the Honourable Chief Guest",
+        start: "19:50",
+        end: "20:00",
+        venue: "Football Ground",
+      },
+      {
+        name: "Dr. Manoj Rai & Reeyaz Band",
+        start: "20:00",
+        end: "21:30",
+        venue: "Football Ground",
+      },
+    ],
+  },
+];
+
 export interface NightHighlight {
   name: string;
   tag: string;
@@ -140,8 +162,7 @@ export interface NightHighlight {
 
 export type NightArt = "concert" | "band" | "kathak" | "folk" | "runway" | "dj";
 
-// The main acts from the "UDGAM 2k26 Night Schedule" sheet. The night page shows these
-// highlights only, not the minute-by-minute running order. The first one is the headliner.
+// The main acts across all nights, shown on the Headliners tab. The first one is the headliner.
 export const NIGHT_HIGHLIGHTS: NightHighlight[] = [
   {
     name: "Adnan's Live",
@@ -162,9 +183,9 @@ export const NIGHT_HIGHLIGHTS: NightHighlight[] = [
     art: "kathak",
   },
   {
-    name: "Manoj Rai & Group",
+    name: "Dr. Manoj Rai & Reeyaz Band",
     tag: "Live Music",
-    blurb: "Manoj Rai and Group open Udgam's nights.",
+    blurb: "Live music from Dr. Manoj Rai and Reeyaz Band to close the cultural night.",
     art: "folk",
   },
   {

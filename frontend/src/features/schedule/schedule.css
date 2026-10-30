@@ -212,7 +212,11 @@
 /* ── Sky ─────────────────────────────────────────────────────────── */
 .sch-sky {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100lvh;
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
@@ -297,7 +301,6 @@
   position: absolute;
   inset: 0;
   animation: sch-twinkle 3.6s ease-in-out infinite;
-  will-change: opacity;
 }
 .sch-stars__group:nth-child(2) {
   animation-delay: -1.2s;
@@ -402,7 +405,6 @@
   filter: drop-shadow(0 10px 30px rgba(120, 40, 90, 0.25));
   transform-origin: 50% 100%;
   animation: sch-sway 9s ease-in-out infinite alternate;
-  will-change: transform;
   transition:
     filter 1.8s var(--sch-ease),
     opacity 1.8s var(--sch-ease);
@@ -654,7 +656,7 @@
 }
 .sch-days__today {
   position: absolute;
-  top: -0.35rem;
+  top: -0.6rem;
   right: -0.1rem;
   padding: 0.05rem 0.4rem;
   border-radius: 999px;
@@ -1030,7 +1032,6 @@
   mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
 }
 .sch-marquee__track {
-  will-change: transform;
   display: flex;
   width: max-content;
   animation: sch-marquee 30s linear infinite;
@@ -1359,7 +1360,6 @@
     radial-gradient(60cqw 50cqh at 50% 85%, rgba(207, 79, 141, 0.55), transparent 70%),
     radial-gradient(50cqw 40cqh at 18% 20%, rgba(122, 86, 163, 0.5), transparent 70%),
     radial-gradient(40cqw 40cqh at 85% 25%, rgba(96, 140, 255, 0.3), transparent 70%);
-  will-change: transform, opacity;
   animation: art-breathe 6s ease-in-out infinite alternate;
 }
 @keyframes art-breathe {
@@ -1392,18 +1392,32 @@
   translate: -50% 0;
   transform-origin: 50% 100%;
   rotate: var(--a);
+}
+.art-lasers span::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 100%;
   background: linear-gradient(0deg, var(--c), transparent 85%);
   filter: drop-shadow(0 0 6px var(--c));
-  will-change: transform, opacity;
   animation: art-laser 4s ease-in-out infinite alternate;
+  animation-delay: inherit;
+}
+@keyframes art-fan {
+  from {
+    transform: rotate(-8deg);
+  }
+  to {
+    transform: rotate(8deg);
+  }
 }
 @keyframes art-laser {
   from {
-    rotate: calc(var(--a) - 12deg);
+    transform: rotate(-12deg);
     opacity: 0.3;
   }
   to {
-    rotate: calc(var(--a) + 12deg);
+    transform: rotate(12deg);
     opacity: 0.95;
   }
 }
@@ -1493,7 +1507,6 @@
   height: 100%;
   overflow: visible;
   filter: drop-shadow(0 0 3px #b79cff);
-  will-change: transform;
   animation: art-wave linear infinite;
 }
 @keyframes art-wave {
@@ -1594,7 +1607,6 @@
 }
 .art-spin {
   filter: drop-shadow(0 0 6px rgba(246, 169, 200, 0.55));
-  will-change: transform;
   animation: art-rot 40s linear infinite;
 }
 .art-spin--slow {
@@ -1659,6 +1671,14 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
   animation: art-flutter 1.6s ease-in-out infinite alternate;
 }
+@keyframes art-string {
+  from {
+    transform: rotate(-1.5deg);
+  }
+  to {
+    transform: rotate(1.5deg);
+  }
+}
 @keyframes art-flutter {
   from {
     transform: rotate(-9deg) skewX(-7deg);
@@ -1708,7 +1728,6 @@
   );
   clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
   filter: blur(4px);
-  will-change: opacity;
   animation: art-blink 3s ease-in-out infinite alternate;
 }
 .art-track {
@@ -1734,7 +1753,6 @@
 .art-track__lights {
   position: absolute;
   inset: -22px 0 0;
-  will-change: transform;
   background-image:
     repeating-linear-gradient(180deg, transparent 0 18px, #fff 18px 22px),
     repeating-linear-gradient(180deg, transparent 0 18px, #fff 18px 22px);
@@ -1842,7 +1860,6 @@
     linear-gradient(rgba(246, 169, 200, 0.75) 1px, transparent 1px),
     linear-gradient(90deg, rgba(183, 156, 255, 0.6) 1px, transparent 1px);
   background-size: 40px 40px;
-  will-change: transform;
   animation: art-gridmove 1.4s linear infinite;
 }
 @keyframes art-gridmove {
@@ -1941,20 +1958,6 @@
    night art pauses, and touch devices drop the live glass blur (it
    re-blurs the moving sky behind every card on every frame) in favour
    of slightly denser cards that look the same at a glance. */
-.sch-flies span,
-.sch-petals span,
-.sch-beams span,
-.art-confetti span,
-.art-flags span,
-.art-notes span,
-.art-flashes span,
-.art-rings span,
-.art-vinyl,
-.art-amp__woofer,
-.art-eq i,
-.sch-eq i {
-  will-change: transform;
-}
 .sch[data-period="morning"] :is(.sch-stars, .sch-flies),
 .sch[data-period="afternoon"] :is(.sch-stars, .sch-flies) {
   visibility: hidden;
@@ -1994,8 +1997,91 @@
   .sch-act__tag {
     background: rgba(60, 26, 70, 0.7);
   }
-  /* half the petals, same look */
-  .sch-petals span:nth-child(2n) {
+  /* time-of-day colours change in one step instead of re-styling the whole page every
+     frame for 1.4 s mid-scroll; the sky tints still cross-fade, so it reads the same */
+  .sch,
+  .sch-land,
+  .sch-tree {
+    transition: none;
+  }
+  /* decoration holds still: trees, stars, fireflies, stage beams, halos */
+  .sch-tree,
+  .sch-stars__group,
+  .sch-flies span,
+  .sch-beams span,
+  .art-haze,
+  .art-kathak::before,
+  .art-truss span {
+    animation: none;
+  }
+  .sch-shooting {
     display: none;
   }
+  /* blur and glow filters on moving layers are re-computed every frame */
+  .sch-beams span,
+  .art-lasers span::before,
+  .art-waves svg,
+  .art-spin,
+  .art-spot,
+  .art-track__lights,
+  .art-kathak::before,
+  .sch-act__tag {
+    filter: none;
+  }
+  .sch-act {
+    transform: none;
+    transition: none;
+  }
+  /* every separately animated piece costs main-thread work each frame on a phone, so the
+     scenes keep their look with far fewer moving parts: the laser fan sways as one piece,
+     and there is less confetti, fewer notes, flashes and rings */
+  .art-lasers {
+    transform-origin: 50% 90%;
+    animation: art-fan 4s ease-in-out infinite alternate;
+  }
+  .art-lasers span::before {
+    animation: none;
+    opacity: 0.75;
+  }
+  .art-confetti,
+  .art-notes span:nth-child(2n),
+  .art-flashes span:not(:nth-child(4n)),
+  .art-rings span:nth-child(2n) {
+    display: none;
+  }
+  /* equalisers hold a staggered shape instead of bouncing bar by bar */
+  .sch-eq i,
+  .art-eq i {
+    animation: none;
+  }
+  .sch-eq i:nth-child(odd),
+  .art-eq i:nth-child(odd) {
+    transform: scaleY(0.55);
+  }
+  .sch-eq i:nth-child(3n),
+  .art-eq i:nth-child(3n) {
+    transform: scaleY(0.8);
+  }
+  /* the prayer-flag string sways as one piece */
+  .art-flags span {
+    animation: none;
+  }
+  .art-flags {
+    transform-origin: 50% 0;
+    animation: art-string 2.4s ease-in-out infinite alternate;
+  }
+  /* a steady glowing dot instead of a pulse (each pulse is a running animation) */
+  .sch-card__badge.is-live i {
+    animation: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+  }
+  /* a quarter of the petals, same look */
+  .sch-petals span:not(:nth-child(4n)) {
+    display: none;
+  }
+}
+
+/* jump target when switching night tabs */
+.sch-anchor {
+  scroll-margin-top: 10rem;
 }

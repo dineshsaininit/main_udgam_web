@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import SchedulePage from "@/features/schedule/SchedulePage";
 import scheduleCss from "@/features/schedule/schedule.css?url";
-import { FEST_DAYS, type ScheduleView } from "@/features/schedule/scheduleData";
+import { FEST_DAYS, NIGHT_PROGRAMMES, type ScheduleView } from "@/features/schedule/scheduleData";
 
-type ScheduleSearch = { view?: ScheduleView; day?: number };
+// night: which night's programme is open under Night; absent = the Headliners tab
+type ScheduleSearch = { view?: ScheduleView; day?: number; night?: number };
 
 export const Route = createFileRoute("/schedule")({
   validateSearch: (search: Record<string, unknown>): ScheduleSearch => {
@@ -11,6 +12,9 @@ export const Route = createFileRoute("/schedule")({
     if (search["view"] === "night") out.view = "night";
     const day = Number(search["day"]);
     if (search["day"] !== undefined && FEST_DAYS.some((d) => d.day === day)) out.day = day;
+    const night = Number(search["night"]);
+    if (search["night"] !== undefined && NIGHT_PROGRAMMES.some((n) => n.night === night))
+      out.night = night;
     return out;
   },
   head: () => ({
@@ -33,6 +37,6 @@ export const Route = createFileRoute("/schedule")({
 });
 
 function Schedule() {
-  const { view, day } = Route.useSearch();
-  return <SchedulePage view={view ?? "day"} day={day} />;
+  const { view, day, night } = Route.useSearch();
+  return <SchedulePage view={view ?? "day"} day={day} night={night} />;
 }

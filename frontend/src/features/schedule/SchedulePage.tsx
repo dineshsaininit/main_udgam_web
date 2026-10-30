@@ -2,7 +2,9 @@ import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { Clock, MapPin, Mic, MoonStar, Music2, Sparkles, Sun, Sunrise, Sunset } from "lucide-react";
 import {
+  createContext,
   memo,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -16,9 +18,9 @@ import mountainImg from "@/assets/distant_mountains_sikkim.webp";
 import treeImg from "@/assets/tree1.webp";
 import { NightArt } from "./NightArt";
 import {
-  DAY_HOSTS,
   DAY_SCHEDULE,
   FEST_DAYS,
+  NIGHT_PROGRAMMES,
   NIGHT_HIGHLIGHTS,
   dayStartMs,
   festDayAt,
@@ -78,6 +80,9 @@ function useLite(): boolean {
   return lite;
 }
 
+const isOnDate = (now: number, date: string) =>
+  now >= dayStartMs(date) && now < dayStartMs(date) + 24 * 60 * 60 * 1000;
+
 /** Wall-clock time, client-only so the server render never disagrees with the browser. */
 function useNow(): number | null {
   const [now, setNow] = useState<number | null>(null);
@@ -89,12 +94,28 @@ function useNow(): number | null {
   return now;
 }
 
+const noop = () => undefined;
+
+// Phones/tablets: entrance animations fade only. Opacity fades run on the GPU; slides and
+// scales run in JavaScript every frame and made scrolling stutter on phones.
+const LiteContext = createContext(false);
+const enter = (lite: boolean, from: { x?: number; y?: number; scale?: number }) =>
+  lite
+    ? { initial: { opacity: 0 }, whileInView: { opacity: 1 } }
+    : {
+        initial: { opacity: 0, ...from },
+        whileInView: { opacity: 1, x: 0, y: 0, scale: 1 },
+      };
+
 export default function SchedulePage({
   view,
   day,
+  night,
 }: {
   view: ScheduleView;
   day: number | undefined;
+  /** which night's programme is open; undefined = Headliners */
+  night: number | undefined;
 }) {
   const navigate = useNavigate();
   const now = useNow();
@@ -102,6 +123,8 @@ export default function SchedulePage({
   const blur = (px: number) => (lite ? {} : { filter: `blur(${px}px)` });
   const festDay = FEST_DAYS.find((d) => d.day === (day ?? 0)) ?? FEST_DAYS[0]!;
   const events = useMemo(() => sortedEvents(DAY_SCHEDULE[festDay.day] ?? []), [festDay.day]);
+  const programme = NIGHT_PROGRAMMES.find((n) => n.night === night);
+  const nightEvents = useMemo(() => sortedEvents(programme?.events ?? []), [programme]);
 
   // Land on today's fest day when the link didn't name one.
   const autoPicked = useRef(false);
@@ -131,178 +154,259 @@ export default function SchedulePage({
   }, [festDay.day]);
 
   const bodyRef = useRef<HTMLDivElement>(null);
-  const go = (next: { view?: ScheduleView; day?: number }) => {
-    navigate({ to: "/schedule", search: (prev) => ({ ...prev, ...next }), resetScroll: false });
+  // night: null goes back to the Headliners tab
+  const go = (next: { view?: ScheduleView; day?: number; night?: number | null }) => {
+    navigate({
+      to: "/schedule",
+      search: (prev) => {
+        const out = { ...prev };
+        if (next.view) out.view = next.view;
+        if (next.day !== undefined) out.day = next.day;
+        if (next.night === null) delete out.night;
+        else if (next.night !== undefined) out.night = next.night;
+        return out;
+      },
+      resetScroll: false,
+    });
     const el = bodyRef.current;
     if (el && el.getBoundingClientRect().top < 0)
       el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
-    <main className={`sch is-${view}`} data-period={period}>
-      <Sky period={period} minutes={sceneMinutes} stage={view === "night"} />
+    <LiteContext.Provider value={lite}>
+      <main className={`sch is-${view}`} data-period={period}>
+        <Sky period={period} minutes={sceneMinutes} stage={view === "night"} />
 
-      <section className="sch-hero">
-        <motion.p
-          className="sch-overline"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          ✿ Udgam 2K26 · {shortDate(FEST_DAYS[0]!.date)} – {shortDate(FEST_DAYS.at(-1)!.date)}
-        </motion.p>
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={view}
-            initial={{ opacity: 0, y: 20, ...blur(8) }}
-            animate={{ opacity: 1, y: 0, ...blur(0) }}
-            exit={{ opacity: 0, y: -16, ...blur(8) }}
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        <section className="sch-hero">
+          <motion.p
+            className="sch-overline"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            <h1 className="sch-title">{view === "day" ? "Day Schedule" : "Udgam Nights"}</h1>
-            <p className="sch-lede">
-              {view === "day"
-                ? "Four days, every slot. Scroll through a day and watch the Sikkim sky follow the clock."
-                : "When the sun sets over the hills, the main stage wakes up. Here's who's taking it."}
-            </p>
-          </motion.div>
-        </AnimatePresence>
-
-        <motion.div
-          className="sch-switch"
-          role="tablist"
-          aria-label="Schedule type"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          {(["day", "night"] as const).map((v) => (
-            <button
-              key={v}
-              role="tab"
-              aria-selected={view === v}
-              className="sch-switch__btn"
-              onClick={() => go({ view: v })}
+            ✿ Udgam 2K26 · {shortDate(FEST_DAYS[0]!.date)} – {shortDate(FEST_DAYS.at(-1)!.date)}
+          </motion.p>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={view}
+              initial={{ opacity: 0, y: 20, ...blur(8) }}
+              animate={{ opacity: 1, y: 0, ...blur(0) }}
+              exit={{ opacity: 0, y: -16, ...blur(8) }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             >
-              {view === v && (
-                <motion.span
-                  layoutId="sch-switch-pill"
-                  className="sch-switch__pill"
-                  transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
-                />
-              )}
-              <span className="sch-switch__label">
-                {v === "day" ? <Sun className="sch-icon" /> : <MoonStar className="sch-icon" />}
-                {v === "day" ? "Day" : "Night"}
-              </span>
-            </button>
-          ))}
-        </motion.div>
-      </section>
+              <h1 className="sch-title">{view === "day" ? "Day Schedule" : "Udgam Nights"}</h1>
+              <p className="sch-lede">
+                {view === "day"
+                  ? "Four days, every slot. Scroll through a day and watch the Sikkim sky follow the clock."
+                  : "When the sun sets over the hills, the main stage wakes up. Here's who's taking it."}
+              </p>
+            </motion.div>
+          </AnimatePresence>
 
-      <AnimatePresence mode="wait" initial={false}>
-        {view === "day" ? (
           <motion.div
-            key="day"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            className="sch-switch"
+            role="tablist"
+            aria-label="Schedule type"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <nav className="sch-days" aria-label="Festival days">
-              <div className="sch-days__track" role="tablist">
-                {FEST_DAYS.map((d) => {
-                  const active = d.day === festDay.day;
-                  const isToday = now !== null && festDayAt(now) === d.day;
-                  return (
-                    <button
-                      key={d.day}
-                      role="tab"
-                      aria-selected={active}
-                      className="sch-days__btn"
-                      onClick={() => go({ day: d.day })}
-                    >
-                      {active && (
-                        <motion.span
-                          layoutId="sch-day-pill"
-                          className="sch-days__pill"
-                          transition={{ type: "spring", bounce: 0.25, duration: 0.55 }}
-                        />
-                      )}
-                      <span className="sch-days__label">
-                        <strong>Day {d.day}</strong>
-                        <small>
-                          {weekday(d.date)} · {shortDate(d.date)}
-                        </small>
-                      </span>
-                      {isToday && <span className="sch-days__today">Today</span>}
-                    </button>
-                  );
-                })}
-              </div>
-            </nav>
-
-            <div ref={bodyRef} className="sch-body">
-              <AnimatePresence mode="wait" custom={direction} initial={false}>
-                <motion.div
-                  key={festDay.day}
-                  custom={direction}
-                  variants={{
-                    enter: (dir: number) => ({ opacity: 0, x: dir * 60, ...blur(6) }),
-                    center: { opacity: 1, x: 0, ...blur(0) },
-                    exit: (dir: number) => ({ opacity: 0, x: dir * -60, ...blur(6) }),
-                  }}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <DayPanel
-                    date={festDay.date}
-                    dayNumber={festDay.day}
-                    events={events}
-                    now={now}
-                    sceneMinutes={sceneMinutes}
-                    onScene={setSceneMinutes}
+            {(["day", "night"] as const).map((v) => (
+              <button
+                key={v}
+                role="tab"
+                aria-selected={view === v}
+                className="sch-switch__btn"
+                onClick={() => go({ view: v })}
+              >
+                {view === v && (
+                  <motion.span
+                    layoutId="sch-switch-pill"
+                    className="sch-switch__pill"
+                    transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
                   />
-                </motion.div>
-              </AnimatePresence>
-            </div>
-            <SceneChip period={period} minutes={sceneMinutes} />
+                )}
+                <span className="sch-switch__label">
+                  {v === "day" ? <Sun className="sch-icon" /> : <MoonStar className="sch-icon" />}
+                  {v === "day" ? "Day" : "Night"}
+                </span>
+              </button>
+            ))}
           </motion.div>
-        ) : (
-          <motion.div
-            key="night"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <NightsShowcase />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </main>
+        </section>
+
+        <AnimatePresence mode="wait" initial={false}>
+          {view === "day" ? (
+            <motion.div
+              key="day"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <nav className="sch-days" aria-label="Festival days">
+                <div className="sch-days__track" role="tablist">
+                  {FEST_DAYS.map((d) => {
+                    const active = d.day === festDay.day;
+                    const isToday = now !== null && festDayAt(now) === d.day;
+                    return (
+                      <button
+                        key={d.day}
+                        role="tab"
+                        aria-selected={active}
+                        className="sch-days__btn"
+                        onClick={() => go({ day: d.day })}
+                      >
+                        {active && (
+                          <motion.span
+                            layoutId="sch-day-pill"
+                            className="sch-days__pill"
+                            transition={{ type: "spring", bounce: 0.25, duration: 0.55 }}
+                          />
+                        )}
+                        <span className="sch-days__label">
+                          <strong>Day {d.day}</strong>
+                          <small>
+                            {weekday(d.date)} · {shortDate(d.date)}
+                          </small>
+                        </span>
+                        {isToday && <span className="sch-days__today">Today</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </nav>
+
+              <div ref={bodyRef} className="sch-body">
+                <AnimatePresence mode="wait" custom={direction} initial={false}>
+                  <motion.div
+                    key={festDay.day}
+                    custom={direction}
+                    variants={{
+                      enter: (dir: number) => ({ opacity: 0, x: dir * 60, ...blur(6) }),
+                      center: { opacity: 1, x: 0, ...blur(0) },
+                      exit: (dir: number) => ({ opacity: 0, x: dir * -60, ...blur(6) }),
+                    }}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <DayPanel
+                      label="Day"
+                      number={festDay.day}
+                      date={festDay.date}
+                      events={events}
+                      now={now}
+                      onScene={setSceneMinutes}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+              <SceneChip period={period} minutes={sceneMinutes} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="night"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <nav className="sch-days" aria-label="Nights">
+                <div className="sch-days__track" role="tablist">
+                  {[null, ...NIGHT_PROGRAMMES].map((n) => {
+                    const active = (n?.night ?? null) === (programme?.night ?? null);
+                    const tonight = n !== null && now !== null && isOnDate(now, n.date);
+                    return (
+                      <button
+                        key={n?.night ?? "headliners"}
+                        role="tab"
+                        aria-selected={active}
+                        className="sch-days__btn"
+                        onClick={() => go({ night: n?.night ?? null })}
+                      >
+                        {active && (
+                          <motion.span
+                            layoutId="sch-night-pill"
+                            className="sch-days__pill"
+                            transition={{ type: "spring", bounce: 0.25, duration: 0.55 }}
+                          />
+                        )}
+                        <span className="sch-days__label">
+                          <strong>{n ? `Night ${n.night}` : "Headliners"}</strong>
+                          <small>
+                            {n ? `${weekday(n.date)} · ${shortDate(n.date)}` : "Main acts"}
+                          </small>
+                        </span>
+                        {tonight && <span className="sch-days__today">Tonight</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </nav>
+
+              <div ref={bodyRef} className="sch-anchor">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={programme ? `night-${programme.night}` : "headliners"}
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -16 }}
+                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    {programme ? (
+                      <div className="sch-body">
+                        <DayPanel
+                          label="Night"
+                          number={programme.night}
+                          date={programme.date}
+                          theme={programme.theme}
+                          host={programme.host}
+                          events={nightEvents}
+                          now={now}
+                          onScene={noop}
+                        />
+                      </div>
+                    ) : (
+                      <NightsShowcase />
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
+    </LiteContext.Provider>
   );
 }
 
-function DayPanel({
+/** The timeline for one day or one night. Memoised: scrolling re-renders only what changed. */
+const DayPanel = memo(function DayPanel({
+  label,
+  number,
   date,
-  dayNumber,
+  theme,
+  host,
   events,
   now,
-  sceneMinutes,
   onScene,
 }: {
+  label: "Day" | "Night";
+  number: number;
   date: string;
-  dayNumber: number;
+  theme?: string;
+  host?: string;
   events: ScheduleEvent[];
   now: number | null;
-  sceneMinutes: number;
   onScene: (minutes: number) => void;
 }) {
+  const lite = useContext(LiteContext);
   const listRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const anchor = `${label === "Day" ? "d" : "n"}${number}`;
 
   // The card crossing the middle band of the viewport sets the sky's time.
   useEffect(() => {
@@ -337,16 +441,22 @@ function DayPanel({
   const base = dayStartMs(date);
   const first = spanOf(events[0]!)[0];
   const last = Math.max(...events.map((e) => spanOf(e)[1]));
+  const activeStart = spanOf(events[activeIndex] ?? events[0]!)[0];
 
   return (
     <>
       <header className="sch-dayhead">
         <span className="sch-dayhead__num" aria-hidden>
-          {dayNumber}
+          {number}
         </span>
         <div>
-          <h2>Day {dayNumber}</h2>
-          <p>{longDate(date)}</p>
+          <h2>
+            {label} {number}
+          </h2>
+          <p>
+            {longDate(date)}
+            {theme ? ` · ${theme}` : ""}
+          </p>
           <div className="sch-dayhead__meta">
             <span>
               <Sparkles className="sch-icon" /> {events.length} events
@@ -354,26 +464,25 @@ function DayPanel({
             <span>
               <Clock className="sch-icon" /> {formatTime(first)} – {formatTime(last)}
             </span>
-            {DAY_HOSTS[dayNumber] && (
+            {host && (
               <span>
-                <Mic className="sch-icon" /> Host: {DAY_HOSTS[dayNumber]}
+                <Mic className="sch-icon" /> Hosts: {host}
               </span>
             )}
           </div>
         </div>
       </header>
 
-      <DayStrip events={events} sceneMinutes={sceneMinutes} dayNumber={dayNumber} />
+      <DayStrip events={events} sceneMinutes={activeStart} anchor={anchor} />
 
       <div ref={listRef} className="sch-timeline">
         {groups.map((group) => {
-          const { label, hint, Icon } = PERIODS[group.period];
+          const { label: periodLabel, hint, Icon } = PERIODS[group.period];
           return (
             <section key={`${group.period}-${group.items[0]!.index}`} className="sch-period">
               <motion.header
                 className="sch-period__head"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                {...enter(lite, { x: -20 })}
                 viewport={{ once: true, amount: 0.6 }}
                 transition={{ duration: 0.5 }}
               >
@@ -381,7 +490,7 @@ function DayPanel({
                   <Icon className="sch-icon" />
                 </span>
                 <div>
-                  <h3>{label}</h3>
+                  <h3>{periodLabel}</h3>
                   <p>{hint}</p>
                 </div>
               </motion.header>
@@ -400,36 +509,14 @@ function DayPanel({
                           ? "live"
                           : "upcoming";
                   return (
-                    <motion.li
+                    <EventCard
                       key={`${event.name}-${event.start}`}
-                      id={`sch-ev-${dayNumber}-${index}`}
-                      data-sch-event
-                      data-index={index}
-                      data-start={start}
-                      className={`sch-card ${index === activeIndex ? "is-active" : ""} is-${status}`}
-                      initial={{ opacity: 0, y: 36, scale: 0.97 }}
-                      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                      viewport={{ once: true, amount: 0.35 }}
-                      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                      <div className="sch-card__time">
-                        <strong>{formatTime(start)}</strong>
-                        <span>to {formatTime(end)}</span>
-                        <em>{formatDuration(end - start)}</em>
-                      </div>
-                      <div className="sch-card__body">
-                        <h4>{event.name}</h4>
-                        <p>
-                          <MapPin className="sch-icon" /> {event.venue}
-                        </p>
-                      </div>
-                      {status === "live" && (
-                        <span className="sch-card__badge is-live">
-                          <i /> Live now
-                        </span>
-                      )}
-                      {status === "done" && <span className="sch-card__badge">Wrapped</span>}
-                    </motion.li>
+                      event={event}
+                      index={index}
+                      id={`sch-ev-${anchor}-${index}`}
+                      active={index === activeIndex}
+                      status={status}
+                    />
                   );
                 })}
               </ol>
@@ -439,17 +526,65 @@ function DayPanel({
       </div>
     </>
   );
-}
+});
+
+/** One event in a timeline; memoised so a new active card re-renders two cards, not all. */
+const EventCard = memo(function EventCard({
+  event,
+  index,
+  id,
+  active,
+  status,
+}: {
+  event: ScheduleEvent;
+  index: number;
+  id: string;
+  active: boolean;
+  status: "upcoming" | "live" | "done";
+}) {
+  const lite = useContext(LiteContext);
+  const [start, end] = spanOf(event);
+  return (
+    <motion.li
+      id={id}
+      data-sch-event
+      data-index={index}
+      data-start={start}
+      className={`sch-card ${active ? "is-active" : ""} is-${status}`}
+      {...enter(lite, { y: 36, scale: 0.97 })}
+      viewport={{ once: true, amount: 0.35 }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <div className="sch-card__time">
+        <strong>{formatTime(start)}</strong>
+        <span>to {formatTime(end)}</span>
+        <em>{formatDuration(end - start)}</em>
+      </div>
+      <div className="sch-card__body">
+        <h4>{event.name}</h4>
+        <p>
+          <MapPin className="sch-icon" /> {event.venue}
+        </p>
+      </div>
+      {status === "live" && (
+        <span className="sch-card__badge is-live">
+          <i /> Live now
+        </span>
+      )}
+      {status === "done" && <span className="sch-card__badge">Wrapped</span>}
+    </motion.li>
+  );
+});
 
 /** A mini Gantt of the whole day; overlapping events stack into lanes. */
 function DayStrip({
   events,
   sceneMinutes,
-  dayNumber,
+  anchor,
 }: {
   events: ScheduleEvent[];
   sceneMinutes: number;
-  dayNumber: number;
+  anchor: string;
 }) {
   const spans = events.map(spanOf);
   const lo = Math.floor(Math.min(...spans.map((s) => s[0])) / 60) * 60;
@@ -470,7 +605,7 @@ function DayStrip({
 
   const jump = (index: number) =>
     document
-      .getElementById(`sch-ev-${dayNumber}-${index}`)
+      .getElementById(`sch-ev-${anchor}-${index}`)
       ?.scrollIntoView({ behavior: "smooth", block: "center" });
 
   return (
@@ -584,6 +719,7 @@ function NightCard({
   index: number;
   featured?: boolean;
 }) {
+  const lite = useContext(LiteContext);
   const reduce = useReducedMotion();
   // Off-screen artwork stops animating so only the cards you can see cost anything.
   const mediaRef = useRef<HTMLDivElement>(null);
@@ -606,8 +742,7 @@ function NightCard({
   return (
     <Tag
       className={`sch-act ${featured ? "is-featured" : ""} act-${index}`}
-      initial={{ opacity: 0, y: 50, scale: 0.96 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      {...enter(lite, { y: 50, scale: 0.96 })}
       viewport={{ once: true, amount: 0.25 }}
       transition={{
         duration: 0.7,
