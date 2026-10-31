@@ -26,6 +26,7 @@ import RulebookViewer from "./components/RulebookViewer";
 
 // Headliner order: the first one starts in the centre of the carousel.
 const SPOTLIGHT_ORDER = [
+  "the-anime-competition",
   "dance-competition",
   "food-fiesta",
   "treasure-hunt",

@@ -476,4 +476,24 @@ export const EVENTS: FestEvent[] = [
     taglines: ["Two to hold one.", "Press in pair to move.", "Stick together, move as one!"],
     rulebookPdf: "/rulebooks/balloon-pair-race.pdf",
   },
+  {
+    id: "the-anime-competition",
+    name: "The anime competition",
+    tier: "major",
+    category: "games",
+    fee: 0,
+    teamSize: { min: 1, max: 1 },
+    description:
+      "Test your anime knowledge, observation skills, and speed across character identification and anime trivia battles.",
+    rounds: [
+      "Round 1: Guess the Anime Character",
+      "Round 2: Anime Quiz Battle",
+    ],
+    taglines: [
+      "Unleash your inner otaku.",
+      "Step into the anime world!",
+      "From silhouettes to trivia — claim your title!",
+    ],
+    rulebookPdf: "/rulebooks/the-anime-competition.pdf",
+  },
 ];
