@@ -94,6 +94,24 @@ export default function EventDrawer({
                 </span>
                 <CategoryChip id={shown.category} small />
                 <span className="ep-size-tag">{teamSizeLabel}</span>
+                {shown.partner && (
+                  <span
+                    className="ep-partner-tag"
+                    style={{
+                      background: "rgba(255, 87, 34, 0.15)",
+                      color: "#ff7a45",
+                      padding: "2px 8px",
+                      borderRadius: "6px",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    ⚡ Powered by {shown.partner}
+                  </span>
+                )}
               </div>
               <h2 id="ep-drawer-title" className="ep-drawer-title">
                 {shown.name}
@@ -171,7 +189,9 @@ export default function EventDrawer({
                     )}
                     {shown.partner && (
                       <div className="ep-info-card">
-                        <span className="ep-info-label">Gaming Partner</span>
+                        <span className="ep-info-label">
+                          {shown.category === "esports" ? "Gaming Partner" : "Powered By"}
+                        </span>
                         <strong className="ep-info-val" style={{ color: "#ff5722" }}>
                           {shown.partner}
                         </strong>

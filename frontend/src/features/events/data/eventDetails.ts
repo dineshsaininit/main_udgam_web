@@ -483,13 +483,15 @@ export const EVENTS: FestEvent[] = [
     category: "games",
     fee: 0,
     teamSize: { min: 1, max: 1 },
+    partner: "The Kollektor",
     description:
-      "Test your anime knowledge, observation skills, and speed across character identification and anime trivia battles.",
+      "Test your anime knowledge, observation skills, and speed across character identification and anime trivia battles. Powered by The Kollektor.",
     rounds: [
       "Round 1: Guess the Anime Character",
       "Round 2: Anime Quiz Battle",
     ],
     taglines: [
+      "Powered by The Kollektor",
       "Unleash your inner otaku.",
       "Step into the anime world!",
       "From silhouettes to trivia — claim your title!",

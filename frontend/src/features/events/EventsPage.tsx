@@ -439,6 +439,23 @@ function HeadlinerTile({
           {event.name}
         </button>
       </h3>
+      {event.partner && (
+        <div
+          className="ep-tile-partner"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "5px",
+            fontSize: "0.82rem",
+            fontWeight: 600,
+            color: "#ff5722",
+            marginBottom: "6px",
+          }}
+        >
+          <span>⚡</span>
+          <span>Powered by {event.partner}</span>
+        </div>
+      )}
       <RotatingTagline lines={event.taglines} />
       {event.description && <p className="ep-tile-desc">{event.description}</p>}
       {!event.description && !event.taglines.length && (
@@ -495,7 +512,7 @@ function TicketCard({ event, registered, onRegister, onOpen, onOpenRulebook }: C
           )}
           {event.partner && (
             <span className="ep-meta-partner" style={{ color: "#ff5722", fontWeight: 600 }}>
-              🎮 {event.partner}
+              ⚡ Powered by {event.partner}
             </span>
           )}
           {event.docUrl && (
