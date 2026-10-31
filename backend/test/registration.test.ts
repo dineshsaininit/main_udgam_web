@@ -134,6 +134,8 @@ describe("registration service", () => {
     process.env["REGISTRATIONS_OPEN"] = "true";
     process.env["RAZORPAY_KEY_SECRET"] = "test_secret";
     process.env["RAZORPAY_WEBHOOK_SECRET"] = "hook_secret";
+    const maze = EVENTS.find((e) => e.id === "string-maze") as { registrationClosed?: boolean };
+    maze.registrationClosed = true;
   });
 
   const input = (eventId: string, members: { name: string; rollNo: string }[] = []) => ({
@@ -161,7 +163,8 @@ describe("registration service", () => {
 
   it("rejects wrong team size before touching the database", async () => {
     const { startRegistration } = await import("../src/services/registrations");
-    const r = await startRegistration(input("antakshari", [{ name: "Bina", rollNo: "B23X02" }]));
+    const m = [1, 2, 3, 4].map((i) => ({ name: `Member ${i}`, rollNo: `B23T0${i}` }));
+    const r = await startRegistration(input("short-movie", m));
     expect(r).toMatchObject({ ok: false, code: "invalid" });
     expect(dbCalls).toHaveLength(0);
   });
@@ -189,7 +192,7 @@ describe("registration service", () => {
       },
     ];
     const { startRegistration } = await import("../src/services/registrations");
-    const r = await startRegistration(input("balloon-pair-race", [{ name: "Bina", rollNo: "b23x02" }]));
+    const r = await startRegistration(input("short-movie", [{ name: "Bina", rollNo: "b23x02" }]));
     expect(r).toMatchObject({
       ok: false,
       code: "conflict",
@@ -213,6 +216,7 @@ describe("registration service", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     const { startRegistration } = await import("../src/services/registrations");
     const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
+    (EVENTS.find((e) => e.id === "string-maze") as { registrationClosed?: boolean }).registrationClosed = false;
     const r = await startRegistration(input("string-maze"));
     expect(r).toMatchObject({ ok: false, code: "error" });
     expect(dbCalls.some((q) => q.includes("udgam_cancel_pending"))).toBe(true);
@@ -234,6 +238,7 @@ describe("registration service", () => {
     });
     const { startRegistration } = await import("../src/services/registrations");
     const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
+    (EVENTS.find((e) => e.id === "string-maze") as { registrationClosed?: boolean }).registrationClosed = false;
     const r = await startRegistration({ ...input("string-maze"), amount: 1 } as never); // client "amount" ignored
     expect(createOrder).toHaveBeenCalledWith(
       expect.objectContaining({ amountPaise: 3000, receipt: id }),
@@ -256,6 +261,7 @@ describe("registration service", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     const { startRegistration } = await import("../src/services/registrations");
     const m = [1, 2].map((i) => ({ name: `Member ${"ABCDE"[i]}`, rollNo: `B23T0${i}` }));
+    (EVENTS.find((e) => e.id === "string-maze") as { registrationClosed?: boolean }).registrationClosed = false;
     const r = await startRegistration(input("string-maze"));
     expect(r).toMatchObject({ ok: false, code: "error" });
     expect(dbCalls.some((q) => q.includes("udgam_cancel_pending"))).toBe(true);

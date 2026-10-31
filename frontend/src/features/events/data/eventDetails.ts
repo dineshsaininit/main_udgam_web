@@ -207,6 +207,7 @@ export const EVENTS: FestEvent[] = [
     category: "performance",
     fee: 0,
     teamSize: { min: 5, max: 5 },
+    registrationClosed: true,
     taglines: [
       "कुछ सुर, कुछ नग़मे, और एक महफ़िल यादगार।",
       "From timeless melodies to unforgettable moments.",
@@ -387,6 +388,7 @@ export const EVENTS: FestEvent[] = [
     category: "games",
     fee: 0,
     teamSize: { min: 1, max: 1 },
+    registrationClosed: true,
     description: "Grab a chair when the music stops.",
     taglines: ["Music on, game on.", "Listen, move, grab, win.", "Move fast, sit fast."],
   },
@@ -435,6 +437,7 @@ export const EVENTS: FestEvent[] = [
     fee: 0,
     teamSize: { min: 1, max: 1 },
     taglines: ["Aim. Bounce. Conquer.", "Aim sharp. Score big."],
+    registrationClosed: true,
     docUrl: DOC("12jCYqkQuibo-SxHFXvPzk_xMqHLQXVcoiurq3-Rd0Zw", "edit?usp=drivesdk"),
     rulebookPdf: "/rulebooks/cup-pong.pdf",
   },
@@ -465,6 +468,7 @@ export const EVENTS: FestEvent[] = [
       "One maze. Endless twists.",
     ],
     rulebookPdf: "/rulebooks/string-maze.pdf",
+    registrationClosed: true,
   },
   {
     id: "balloon-pair-race",
@@ -475,6 +479,7 @@ export const EVENTS: FestEvent[] = [
     teamSize: { min: 2, max: 2 },
     taglines: ["Two to hold one.", "Press in pair to move.", "Stick together, move as one!"],
     rulebookPdf: "/rulebooks/balloon-pair-race.pdf",
+    registrationClosed: true,
   },
   {
     id: "the-anime-competition",
