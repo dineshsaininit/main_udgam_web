@@ -19,15 +19,15 @@ describe("event drawer + registration form", () => {
   it("Escape closes the form on top first, then the drawer, and unlocks scrolling", async () => {
     render(<EventsPage events={EVENTS} categories={EVENT_CATEGORIES} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Photography" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "The anime competition" })[0]!);
     await waitFor(() => expect(drawerLayer()).toHaveClass("is-open"));
 
-    const drawer = screen.getByRole("dialog", { name: /Photography/ });
-    fireEvent.click(within(drawer).getByRole("button", { name: "Register for Photography" }));
-    expect(screen.getByRole("heading", { name: "Register for Photography" })).toBeInTheDocument();
+    const drawer = screen.getByRole("dialog", { name: /The anime competition/ });
+    fireEvent.click(within(drawer).getByRole("button", { name: "Register for The anime competition" }));
+    expect(screen.getByRole("heading", { name: "Register for The anime competition" })).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: "Escape" });
-    expect(screen.queryByRole("heading", { name: "Register for Photography" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Register for The anime competition" })).not.toBeInTheDocument();
     expect(drawerLayer()).toHaveClass("is-open");
     expect(document.body.style.overflow).toBe("hidden");
 

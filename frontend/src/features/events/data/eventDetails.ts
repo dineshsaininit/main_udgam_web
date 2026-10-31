@@ -415,6 +415,7 @@ export const EVENTS: FestEvent[] = [
     description: "Submit raw pictures taken on your phone, with no post-processing.",
     taglines: ["Freeze the vibe, frame the moment.", "Paal ko thaamo, yaadon mein sajaao."],
     rulebookPdf: "/rulebooks/photography.pdf",
+    registrationClosed: true,
   },
   {
     id: "food-eating-challenge",
@@ -451,6 +452,7 @@ export const EVENTS: FestEvent[] = [
     taglines: ["Small screen. Big stories.", "Your vision, our screen."],
     docUrl: DOC("1RIhcZUI_ft315IRD_aH607UVxkKPNDeOGRuYlBUMGHQ", "edit?usp=drivesdk"),
     rulebookPdf: "/rulebooks/short-movie.pdf",
+    registrationClosed: true,
   },
   {
     id: "string-maze",

@@ -148,7 +148,7 @@ describe("registration service", () => {
   it("refuses everything while registrations are closed", async () => {
     process.env["REGISTRATIONS_OPEN"] = "false";
     const { startRegistration } = await import("../src/services/registrations");
-    const r = await startRegistration(input("photography"));
+    const r = await startRegistration(input("the-anime-competition"));
     expect(r).toMatchObject({ ok: false, code: "closed" });
     expect(dbCalls).toHaveLength(0);
   });
@@ -163,8 +163,7 @@ describe("registration service", () => {
 
   it("rejects wrong team size before touching the database", async () => {
     const { startRegistration } = await import("../src/services/registrations");
-    const m = [1, 2, 3, 4].map((i) => ({ name: `Member ${i}`, rollNo: `B23T0${i}` }));
-    const r = await startRegistration(input("short-movie", m));
+    const r = await startRegistration(input("the-anime-competition", [{ name: "Bina", rollNo: "B23X02" }]));
     expect(r).toMatchObject({ ok: false, code: "invalid" });
     expect(dbCalls).toHaveLength(0);
   });
@@ -178,7 +177,7 @@ describe("registration service", () => {
       },
     ];
     const { startRegistration } = await import("../src/services/registrations");
-    const r = await startRegistration(input("photography"));
+    const r = await startRegistration(input("the-anime-competition"));
     expect(r).toMatchObject({ ok: true, status: "confirmed" });
     expect(createOrder).not.toHaveBeenCalled();
   });
@@ -188,17 +187,17 @@ describe("registration service", () => {
       {
         registration_id: null,
         status: "conflict",
-        conflicts: [{ roll_no: "B23X02", pending: false }],
+        conflicts: [{ roll_no: "B23CS001", pending: false }],
       },
     ];
     const { startRegistration } = await import("../src/services/registrations");
-    const r = await startRegistration(input("short-movie", [{ name: "Bina", rollNo: "b23x02" }]));
+    const r = await startRegistration(input("the-anime-competition"));
     expect(r).toMatchObject({
       ok: false,
       code: "conflict",
-      conflicts: [{ rollNo: "B23X02", pending: false }],
+      conflicts: [{ rollNo: "B23CS001", pending: false }],
     });
-    expect(r.ok ? "" : r.message).toMatch(/B23X02/);
+    expect(r.ok ? "" : r.message).toMatch(/B23CS001/);
   });
 
   it("never opens payment for an order it couldn't link to the registration", async () => {
