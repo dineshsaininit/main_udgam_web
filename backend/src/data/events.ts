@@ -47,7 +47,7 @@ export const EVENTS: readonly EventRule[] = [
   { id: "short-movie", name: "Short Movie Competition", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 1, max: 3 }, registrationClosed: true },
   { id: "string-maze", name: "String Maze", tier: "regular", fee: 30, feeUnit: "person", teamSize: { min: 1, max: 1 }, registrationClosed: true },
   { id: "balloon-pair-race", name: "Balloon Between Two Race", tier: "regular", fee: 0, feeUnit: null, teamSize: { min: 2, max: 2 }, registrationClosed: true },
-  { id: "the-anime-competition", name: "The anime competition", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 } },
+  { id: "the-anime-competition", name: "The anime competition", tier: "major", fee: 0, feeUnit: null, teamSize: { min: 1, max: 1 }, registrationClosed: true },
 ];
 
 export const eventById = (id: string) => EVENTS.find((e) => e.id === id);

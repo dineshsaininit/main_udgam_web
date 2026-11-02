@@ -504,5 +504,6 @@ export const EVENTS: FestEvent[] = [
       "From silhouettes to trivia — claim your title!",
     ],
     rulebookPdf: "/rulebooks/the-anime-competition.pdf",
+    registrationClosed: true,
   },
 ];

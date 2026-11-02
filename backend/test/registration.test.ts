@@ -1,5 +1,5 @@
 import { createHmac } from "node:crypto";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { EVENTS } from "../src/data/events";
 import {
   amountPaise,
@@ -136,6 +136,13 @@ describe("registration service", () => {
     process.env["RAZORPAY_WEBHOOK_SECRET"] = "hook_secret";
     const maze = EVENTS.find((e) => e.id === "string-maze") as { registrationClosed?: boolean };
     maze.registrationClosed = true;
+    const anime = EVENTS.find((e) => e.id === "the-anime-competition") as { registrationClosed?: boolean };
+    if (anime) anime.registrationClosed = false;
+  });
+
+  afterEach(() => {
+    const anime = EVENTS.find((e) => e.id === "the-anime-competition") as { registrationClosed?: boolean };
+    if (anime) anime.registrationClosed = true;
   });
 
   const input = (eventId: string, members: { name: string; rollNo: string }[] = []) => ({

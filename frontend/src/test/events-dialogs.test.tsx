@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import EventsPage from "@/features/events/EventsPage";
 import { EVENTS, EVENT_CATEGORIES } from "@/features/events/data/eventDetails";
 
@@ -16,6 +16,16 @@ vi.mock("@tanstack/react-router", () => ({
 const drawerLayer = () => document.querySelector(".ep-drawer-layer");
 
 describe("event drawer + registration form", () => {
+  beforeEach(() => {
+    const e = EVENTS.find((x) => x.id === "the-anime-competition");
+    if (e) e.registrationClosed = false;
+  });
+
+  afterEach(() => {
+    const e = EVENTS.find((x) => x.id === "the-anime-competition");
+    if (e) e.registrationClosed = true;
+  });
+
   it("Escape closes the form on top first, then the drawer, and unlocks scrolling", async () => {
     render(<EventsPage events={EVENTS} categories={EVENT_CATEGORIES} />);
 
